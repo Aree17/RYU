@@ -37,14 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<< Updated upstream
     'Resultados.apps.ResultadosConfig',
     'Usuarios.apps.UsuariosConfig',
     'Prueba.apps.PruebaConfig',
     'EstructuraAcademica.apps.EstructuraacademicaConfig'
-=======
-    'pruebavocacional'
->>>>>>> Stashed changes
 ]
 
 MIDDLEWARE = [
