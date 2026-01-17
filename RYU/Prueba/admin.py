@@ -5,9 +5,14 @@ Pregunta, BancoPregunta, Opcion, PreguntaOpcion
 # Register your models here.
 @admin.register(BancoPregunta)
 class BancoPreguntaAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'vigente', 'periodoVigente', 'carrera')
+    list_display = ('nombre', 'vigente', 'carrera', 'periodos')
     list_filter = ('vigente','periodoVigente', 'carrera')
-    search_fields = ('BancoPreguntas__enunciado',)
+    search_fields = ('banco_preguntas_enunciado',)
+
+    def periodos(self, obj):
+        return ", ".join(p.nombre for p in obj.periodoVigente.all())
+
+    periodos.short_description = "Períodos"
 
 @admin.register(Pregunta)
 class PreguntaAdmin(admin.ModelAdmin):
