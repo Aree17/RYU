@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -17,18 +18,11 @@ class Persona(models.Model):
 
 
 class Cuenta(models.Model):
-    # Relación 1 a 1 (cada Persona tiene exactamente una Cuenta y viceversa)
-    persona = models.OneToOneField(
-        Persona,
-        on_delete=models.CASCADE,
-        related_name="cuenta"
-    )
+    persona = models.OneToOneField(Persona, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    usuario = models.CharField(max_length=50, unique=True)
-    contrasena = models.CharField(max_length=128, verbose_name="contraseña")
     activo = models.BooleanField(default=True)
 
-    # Rol (enumeración del diagrama)
     rol = models.CharField(
         max_length=20,
         choices=Rol.choices,
@@ -36,4 +30,4 @@ class Cuenta(models.Model):
     )
 
     def __str__(self):
-        return f"{self.usuario} - {self.rol}"
+        return self.user.username
