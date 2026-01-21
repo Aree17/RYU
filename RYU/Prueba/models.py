@@ -1,6 +1,6 @@
 from django.db import models
 from EstructuraAcademica.models import PeriodoAcademico, Carrera
-# Create your models here.
+
 class BancoPreguntas(models.Model):
     nombre = models.CharField(max_length=100)
     periodoVigente = models.ManyToManyField('EstructuraAcademica.PeriodoAcademico', related_name='bancos_preguntas',
