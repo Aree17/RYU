@@ -1,3 +1,2 @@
 from django.shortcuts import render
-
-# Create your views here.
+from Resultados.models import ResultadoPorCarrera, Resultado, Prueba
