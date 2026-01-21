@@ -4,9 +4,9 @@ from EstructuraAcademica.models import PeriodoAcademico, Carrera
 class BancoPregunta(models.Model):
     nombre = models.CharField(max_length=100)
     vigente = models.BooleanField(default=False)
-    periodoVigente = models.ForeignKey('EstructuraAcademica.PeriodoAcademico', on_delete=models.CASCADE, related_name='Periodo', null=True,
+    periodoVigente = models.ManyToManyField('EstructuraAcademica.PeriodoAcademico', related_name='bancos_pregunta',
     blank=True)
-    carrera = models.ForeignKey('EstructuraAcademica.Carrera', on_delete=models.CASCADE, related_name='Carrera',null=True,
+    carrera = models.ForeignKey('EstructuraAcademica.Carrera', on_delete=models.CASCADE, related_name='bancos_pregunta',null=True,
     blank=True)
 
     class Meta:
@@ -18,7 +18,7 @@ class BancoPregunta(models.Model):
 
 class Pregunta(models.Model):
     enunciado = models.TextField()
-    banco = models.ForeignKey('BancoPregunta', on_delete=models.CASCADE, related_name='BancoPreguntas')
+    banco = models.ForeignKey('BancoPregunta', on_delete=models.CASCADE, related_name='pregunta')
 
     class Meta:
         verbose_name = "Pregunta"
@@ -38,8 +38,8 @@ class Opcion(models.Model):
         return self.contenido
 
 class PreguntaOpcion(models.Model):
-    pregunta = models.ForeignKey('Pregunta', on_delete=models.CASCADE, related_name='Preguntas')
-    opcion = models.ForeignKey('Opcion', on_delete=models.CASCADE, related_name='Opcion')
+    pregunta = models.ForeignKey('Pregunta', on_delete=models.CASCADE, related_name='opcion')
+    opcion = models.ForeignKey('Opcion', on_delete=models.CASCADE, related_name='pregunta')
 
     class Meta:
         verbose_name = "Opción de pregunta"
