@@ -12,7 +12,10 @@ class PersonaAdmin(admin.ModelAdmin):
 
 @admin.register(Cuenta)
 class CuentaAdmin(admin.ModelAdmin):
-    list_display = ("usuario", "rol", "activo", "persona")
-    search_fields = ("usuario", "persona__nombres", "persona__apellidos", "persona__cedula", "persona__correo")
-    list_filter = ("rol", "activo")
-    ordering = ("usuario",)
+    list_display = ("get_usuario", "rol", "activo")
+    ordering = ("user__username",)
+
+    def get_usuario(self, obj):
+        return obj.user.username
+
+    get_usuario.short_description = "Usuario"

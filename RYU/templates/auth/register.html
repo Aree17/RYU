@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registro</title>
+</head>
+<body>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <input type="text" name="username" placeholder="Usuario" required><br>
+    <input type="text" name="nombres" placeholder="Nombres" required><br>
+    <input type="text" name="apellidos" placeholder="Apellidos" required><br>
+    <input type="email" name="correo" placeholder="Correo" required><br>
+    <input type="text" name="cedula" placeholder="Cédula" required><br>
+    <input type="password" name="password" placeholder="Contraseña" required><br>
+
+    <button type="submit">Registrar</button>
+</form>
+
+
+<a href="{% url 'login' %}">Ya tengo cuenta</a>
+
+</body>
+</html>
