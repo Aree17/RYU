@@ -1,13 +1,13 @@
 from django.contrib import admin
 from .models import (
-Pregunta, BancoPregunta, Opcion, PreguntaOpcion
+Pregunta, BancoPreguntas, Opcion
 )
 # Register your models here.
-@admin.register(BancoPregunta)
-class BancoPreguntaAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'vigente', 'carrera', 'periodos')
-    list_filter = ('vigente','periodoVigente', 'carrera')
-    search_fields = ('banco_preguntas_enunciado',)
+@admin.register(BancoPreguntas)
+class BancoPreguntasAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'carrera', 'periodos', 'vigente')
+    list_filter = ('periodoVigente', 'carrera',)
+    search_fields = ('banco_preguntas',)
 
     def periodos(self, obj):
         return ", ".join(p.nombre for p in obj.periodoVigente.all())
@@ -16,17 +16,14 @@ class BancoPreguntaAdmin(admin.ModelAdmin):
 
 @admin.register(Pregunta)
 class PreguntaAdmin(admin.ModelAdmin):
-    list_display = ('enunciado', 'banco')
-    list_filter = ('banco',)
+    list_display = ('enunciado', 'banco','pregunta_opcion')
+
+
+    def pregunta_opcion(self, obj):
+        return ", ".join(p.contenido for p in obj.opcion.all())
+    pregunta_opcion.short_description = "Opcion"
 
 @admin.register(Opcion)
 class OpcionAdmin(admin.ModelAdmin):
     list_display = ('contenido', 'valor')
     list_filter = ('contenido','valor')
-
-@admin.register(PreguntaOpcion)
-class PreguntaOpcionAdmin(admin.ModelAdmin):
-    list_display = ('pregunta', 'opcion')
-    list_filter = ('pregunta',)
-    search_fields = ('pregunta__enunciado',)
-
