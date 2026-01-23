@@ -1,24 +1,28 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from django.contrib import messages
-from .forms import RegistroForm
-from .models import Persona, Cuenta
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.contrib.auth import logout
+from django.contrib import messages
+from django.db import transaction
+from .forms import RegistroForm
+from Usuarios.models import Persona, Cuenta, Rol
+from EstructuraAcademica.models import PeriodoAcademico
+from Resultados.models import Prueba, PruebaUsuario, Estado
 
+@transaction.atomic
 def register(request):
     if request.method == "POST":
         form = RegistroForm(request.POST)
+
         if form.is_valid():
+            username = form.cleaned_data["username"].strip()
+            correo = form.cleaned_data["correo"].strip()
 
-            username = form.cleaned_data["username"]
-            correo = form.cleaned_data["correo"]
-
-            if User.objects.filter(username=username).exists():
+            if User.objects.filter(username__iexact=username).exists():
                 messages.error(request, "El usuario ya existe")
-                return redirect("register")
+                return render(request, "auth/register.html", {"form": form})
 
+            # Crear Persona
             persona = Persona.objects.create(
                 nombres=form.cleaned_data["nombres"],
                 apellidos=form.cleaned_data["apellidos"],
@@ -26,6 +30,7 @@ def register(request):
                 cedula=form.cleaned_data["cedula"]
             )
 
+            # Crear User
             user = User.objects.create_user(
                 username=username,
                 email=correo,
@@ -34,14 +39,28 @@ def register(request):
                 last_name=form.cleaned_data["apellidos"]
             )
 
-            Cuenta.objects.create(
-                persona=persona,
-                user=user
-            )
+            # Crear Cuenta
+            cuenta = Cuenta.objects.create(persona=persona, user=user)
+
+            # Asignar PruebaUsuario
+            if cuenta.rol == Rol.ASPIRANTE and cuenta.activo:
+                periodo_vigente = (PeriodoAcademico.objects.filter(vigencia=True).order_by("-id").first())
+
+                if periodo_vigente:
+                    prueba = Prueba.objects.filter(periodo_academico=periodo_vigente).first()
+
+                    if prueba:
+                        try:
+                            PruebaUsuario.objects.get_or_create(
+                                persona_id=persona.id,
+                                prueba_id=prueba.id,
+                                defaults={"estado": Estado.DISPONIBLE,"fecha_realizacion": None}
+                            )
+                        except Exception as e:
+                            print("No se pudo crear PruebaUsuario:", repr(e))
 
             messages.success(request, "Cuenta creada correctamente")
             return redirect("login")
-
     else:
         form = RegistroForm()
 

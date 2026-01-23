@@ -1,13 +1,12 @@
 from django.contrib import admin
 from .models import Facultad, Carrera, MallaCurricular, PeriodoAcademico
-
+from Prueba.models import BancoPreguntas
 
 @admin.register(Facultad)
 class FacultadAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'siglas')
     search_fields = ('nombre', 'siglas')
     ordering = ('nombre',)
-
 
 @admin.register(Carrera)
 class CarreraAdmin(admin.ModelAdmin):
@@ -16,7 +15,6 @@ class CarreraAdmin(admin.ModelAdmin):
     search_fields = ('nombre', 'descripcion')
     ordering = ('nombre',)
 
-
 @admin.register(MallaCurricular)
 class MallaCurricularAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'carrera', 'vigente')
@@ -24,6 +22,9 @@ class MallaCurricularAdmin(admin.ModelAdmin):
     search_fields = ('nombre',)
     ordering = ('nombre',)
 
+class BancoPreguntaInline(admin.TabularInline):
+    model = BancoPreguntas.periodoVigente.through
+    extra = 1
 
 @admin.register(PeriodoAcademico)
 class PeriodoAcademicoAdmin(admin.ModelAdmin):
@@ -32,3 +33,5 @@ class PeriodoAcademicoAdmin(admin.ModelAdmin):
     search_fields = ('nombre',)
     date_hierarchy = 'fecha_inicio'
     ordering = ('-fecha_inicio',)
+
+    inlines = [BancoPreguntaInline]
