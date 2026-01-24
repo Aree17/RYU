@@ -13,7 +13,7 @@ class PersonaAdmin(admin.ModelAdmin):
 @admin.register(Cuenta)
 class CuentaAdmin(admin.ModelAdmin):
     list_display = ("get_usuario", "rol", "activo")
-    ordering = ("user__username",)
+    ordering = ("usuario__username",)
 
     def get_usuario(self, obj):
         return obj.user.username

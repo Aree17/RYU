@@ -19,7 +19,7 @@ class Persona(models.Model):
 
 class Cuenta(models.Model):
     persona = models.OneToOneField(Persona, on_delete=models.CASCADE)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE)
 
     activo = models.BooleanField(default=True)
 
@@ -30,4 +30,4 @@ class Cuenta(models.Model):
     )
 
     def __str__(self):
-        return self.user.username
+        return self.usuario.username
