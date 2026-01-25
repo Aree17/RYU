@@ -5,5 +5,3 @@ class ResultadosConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "Resultados"
 
-    def ready(self):
-        import Resultados.signals

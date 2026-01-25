@@ -51,13 +51,8 @@ class ResultadoPorCarrera(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(
-                fields=["prueba_usuario", "banco_pregunta"],
-                name="unique_resultado_por_banco_prueba_usuario"
-            )
+            models.UniqueConstraint(fields=["prueba_usuario", "banco_pregunta"], name="unique_prueba_usuario_banco")
         ]
-
-
 
 class Respuesta(models.Model):
     resultado_por_carrera = models.ForeignKey(ResultadoPorCarrera, on_delete=models.CASCADE, related_name='respuestas_usuario', null=True, blank=True)

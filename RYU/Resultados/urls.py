@@ -9,5 +9,8 @@ urlpatterns = [
     path(
         "Resultados/<int:prueba_usuario_id>/", views.visualizar_resultados_view, name="visualizar_resultados"),
     path("reportes/dashboard/", views.dashboard_resultados, name="dashboard_resultados"),
+    path("Prueba/<int:prueba_usuario_id>/abandonar/", views.abandonar_prueba_view, name="abandonar_prueba"),
+
+
 ]
 

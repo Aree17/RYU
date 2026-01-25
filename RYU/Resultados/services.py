@@ -6,29 +6,40 @@ from Prueba.models import Pregunta, Opcion
 from Usuarios.models import Cuenta, Rol
 from .models import PruebaUsuario, BancoPreguntas, ResultadoPorCarrera, Respuesta, Estado
 
+
+def obtener_bancos_del_periodo(periodo):
+    return (BancoPreguntas.objects.filter(periodoVigente=periodo, periodoVigente__vigencia=True).distinct())
+
 @transaction.atomic
-def asignar_prueba_a_aspirantes(prueba):
-    cuentas = (
-        Cuenta.objects.filter(rol=Rol.ASPIRANTE, activo=True).select_related('persona'))
+def crear_prueba_usuario_con_resultados(prueba, persona):
+    pu, created = PruebaUsuario.objects.get_or_create(
+        prueba=prueba, persona=persona, defaults={"estado": Estado.DISPONIBLE, "fecha_realizacion": None})
 
-    # Crear PruebaUsuario masivamente
-    asignaciones = [PruebaUsuario(prueba=prueba, persona=c.persona) for c in cuentas]
-    PruebaUsuario.objects.bulk_create(asignaciones, ignore_conflicts=True)
+    if not created:
+        return pu
 
-    # Obtener los PruebaUsuario que existen para esta Prueba
-    persona_ids = [c.persona_id for c in cuentas]
-    prueba_usuarios = PruebaUsuario.objects.filter(prueba=prueba, persona_id__in=persona_ids)
+    bancos = obtener_bancos_del_periodo(prueba.periodo_academico)
 
-    # Bancos asociados al periodo académico de la Prueba
-    periodo = prueba.periodo_academico
-    bancos = BancoPreguntas.objects.filter(periodoVigente=periodo).distinct()
+    if not bancos.exists():
+        raise ValidationError(
+            "No existen bancos de preguntas asociados al periodo académico vigente."
+        )
 
-    # Crear ResultadoPorCarrera
     resultados = [
-        ResultadoPorCarrera(prueba_usuario=pu, banco_pregunta=banco) for pu in prueba_usuarios for banco in bancos]
+        ResultadoPorCarrera(prueba_usuario=pu, banco_pregunta=banco, resultado_total=0)
+        for banco in bancos
+    ]
 
     ResultadoPorCarrera.objects.bulk_create(resultados, ignore_conflicts=True)
 
+    return pu
+
+@transaction.atomic
+def asignar_prueba_a_aspirantes(prueba):
+    cuentas = ( Cuenta.objects .filter(rol=Rol.ASPIRANTE, activo=True) .select_related("persona"))
+
+    for cuenta in cuentas:
+        crear_prueba_usuario_con_resultados(prueba=prueba, persona=cuenta.persona)
 
 @transaction.atomic
 def registrar_respuesta(prueba_usuario_id: int, pregunta_id: int, opcion_id: int) -> Respuesta:
@@ -53,8 +64,6 @@ def registrar_respuesta(prueba_usuario_id: int, pregunta_id: int, opcion_id: int
     )
     return respuesta
 
-
-@transaction.atomic
 @transaction.atomic
 def finalizar_prueba(prueba_usuario_id: int) -> None:
     prueba_usuario = PruebaUsuario.objects.select_for_update().get(id=prueba_usuario_id)
@@ -62,7 +71,8 @@ def finalizar_prueba(prueba_usuario_id: int) -> None:
     if prueba_usuario.estado == Estado.FINALIZADA:
         return
 
-    total_preguntas = Pregunta.objects.filter(banco__periodoVigente=prueba_usuario.prueba.periodo_academico).count()
+    total_preguntas = Pregunta.objects.filter(banco__in=ResultadoPorCarrera.objects.filter(
+        prueba_usuario=prueba_usuario).values("banco_pregunta")).count()
 
     respondidas = Respuesta.objects.filter(resultado_por_carrera__prueba_usuario=prueba_usuario).values("pregunta_id").distinct().count()
 
@@ -96,7 +106,6 @@ def top_carreras_global(limit=10):
         .order_by("-total")[:limit]
     )
 
-
 def top_carreras_por_periodo(periodo_id, limit=10):
     return (
         ResultadoPorCarrera.objects
@@ -109,17 +118,11 @@ def top_carreras_por_periodo(periodo_id, limit=10):
         .order_by("-total")[:limit]
     )
 
-from django.db.models import Count, Q
-from Resultados.models import Estado, PruebaUsuario
-
 def tasa_finalizacion_por_prueba():  # GLOBAL
     rows = (
         PruebaUsuario.objects
         .values("prueba__id", "prueba__titulo")
-        .annotate(
-            asignadas=Count("id"),
-            finalizadas=Count("id", filter=Q(estado=Estado.FINALIZADA)),
-        )
+        .annotate(asignadas=Count("id"), finalizadas=Count("id", filter=Q(estado=Estado.FINALIZADA)),)
         .order_by("-finalizadas")
     )
 
@@ -130,17 +133,13 @@ def tasa_finalizacion_por_prueba():  # GLOBAL
         r["tasa"] = round((finalizadas / asignadas) * 100, 2) if asignadas else 0
         result.append(r)
     return result
-
 
 def tasa_finalizacion_por_periodo(periodo_id):
     rows = (
         PruebaUsuario.objects
         .filter(prueba__periodo_academico_id=periodo_id)
         .values("prueba__id", "prueba__titulo")
-        .annotate(
-            asignadas=Count("id"),
-            finalizadas=Count("id", filter=Q(estado=Estado.FINALIZADA)),
-        )
+        .annotate(asignadas=Count("id"),finalizadas=Count("id", filter=Q(estado=Estado.FINALIZADA)),)
         .order_by("-finalizadas")
     )
 
@@ -151,7 +150,6 @@ def tasa_finalizacion_por_periodo(periodo_id):
         r["tasa"] = round((finalizadas / asignadas) * 100, 2) if asignadas else 0
         result.append(r)
     return result
-
 
 def promedio_por_carrera():
     return (
@@ -165,10 +163,7 @@ def promedio_por_carrera():
 def promedio_carrera_por_periodo(periodo_id):
     return (
         ResultadoPorCarrera.objects
-        .filter(
-            prueba_usuario__estado=Estado.FINALIZADA,
-            prueba_usuario__prueba__periodo_academico_id=periodo_id
-        )
+        .filter(prueba_usuario__estado=Estado.FINALIZADA,prueba_usuario__prueba__periodo_academico_id=periodo_id)
         .values("banco_pregunta__carrera__id", "banco_pregunta__carrera__nombre")
         .annotate(promedio=Avg("resultado_total"))
         .order_by("-promedio")
