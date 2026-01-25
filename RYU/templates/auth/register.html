@@ -1,29 +1,91 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
     <title>Registro</title>
 </head>
 <body>
 
+<h2>Registro de usuario</h2>
+
+<!-- MENSAJES GENERALES -->
 {% if messages %}
     {% for message in messages %}
-        <p>{{ message }}</p>
+        <p style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %};">
+            {{ message }}
+        </p>
     {% endfor %}
 {% endif %}
 
 <form method="POST">
     {% csrf_token %}
 
+    <!-- USUARIO -->
     <input type="text" name="username" placeholder="Usuario" required><br>
+    {% for error in form.username.errors %}
+        <p style="color:red;">{{ error }}</p>
+    {% endfor %}
+
+    <br>
+
+    <!-- NOMBRES -->
     <input type="text" name="nombres" placeholder="Nombres" required><br>
+    {% for error in form.nombres.errors %}
+        <p style="color:red;">{{ error }}</p>
+    {% endfor %}
+
+    <br>
+
+    <!-- APELLIDOS -->
     <input type="text" name="apellidos" placeholder="Apellidos" required><br>
+    {% for error in form.apellidos.errors %}
+        <p style="color:red;">{{ error }}</p>
+    {% endfor %}
+
+    <br>
+
+    <!-- CORREO -->
     <input type="email" name="correo" placeholder="Correo" required><br>
+    {% for error in form.correo.errors %}
+        <p style="color:red;">{{ error }}</p>
+    {% endfor %}
+
+    <br>
+
+    <!-- CÉDULA -->
     <input type="text" name="cedula" placeholder="Cédula" required><br>
+
+    <small style="color:#555; display:block; margin-bottom:5px;">
+        {{ form.cedula.help_text }}
+    </small>
+
+    {% for error in form.cedula.errors %}
+        <p style="color:red; font-weight:bold;">
+            {{ error }}
+        </p>
+    {% endfor %}
+
+    <br>
+
+    <!-- CONTRASEÑA -->
     <input type="password" name="password" placeholder="Contraseña" required><br>
+
+    <small style="color:#555; display:block; margin-bottom:5px;">
+        {{ form.password.help_text|safe }}
+    </small>
+
+    {% for error in form.password.errors %}
+        <p style="color:red; font-weight:bold;">
+            {{ error }}
+        </p>
+    {% endfor %}
+
+    <br>
 
     <button type="submit">Registrar</button>
 </form>
 
+<br>
 <a href="{% url 'login' %}">Ya tengo cuenta</a>
 
 </body>

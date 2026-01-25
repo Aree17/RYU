@@ -22,4 +22,7 @@ urlpatterns = [
         template_name="auth/password_reset_complete.html"
     ), name="password_reset_complete"),
 
+    path("perfil/", views.perfil_view, name="perfil"),
+    path("perfil/cambiar-password/", views.cambiar_password_view, name="cambiar_password"),
+
 ]
