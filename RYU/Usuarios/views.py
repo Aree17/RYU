@@ -1,9 +1,12 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db import transaction
+
+from Resultados.services import crear_prueba_usuario_con_resultados
 from .forms import RegistroForm
 from Usuarios.models import Persona, Cuenta, Rol
 from EstructuraAcademica.models import PeriodoAcademico
@@ -24,43 +27,31 @@ def register(request):
 
             # Crear Persona
             persona = Persona.objects.create(
-                nombres=form.cleaned_data["nombres"],
-                apellidos=form.cleaned_data["apellidos"],
-                correo=correo,
-                cedula=form.cleaned_data["cedula"]
-            )
+                nombres=form.cleaned_data["nombres"], apellidos=form.cleaned_data["apellidos"], correo=correo, cedula=form.cleaned_data["cedula"])
 
             # Crear User
             user = User.objects.create_user(
-                username=username,
-                email=correo,
-                password=form.cleaned_data["password"],
-                first_name=form.cleaned_data["nombres"],
-                last_name=form.cleaned_data["apellidos"]
-            )
+                username=username, email=correo, password=form.cleaned_data["password"], first_name=form.cleaned_data["nombres"], last_name=form.cleaned_data["apellidos"])
 
             # Crear Cuenta
             cuenta = Cuenta.objects.create(persona=persona, user=user)
 
             # Asignar PruebaUsuario
             if cuenta.rol == Rol.ASPIRANTE and cuenta.activo:
-                periodo_vigente = (PeriodoAcademico.objects.filter(vigencia=True).order_by("-id").first())
+                periodo_vigente = (PeriodoAcademico.objects.filter(vigencia=True).order_by("-fecha_inicio").first())
 
                 if periodo_vigente:
                     prueba = Prueba.objects.filter(periodo_academico=periodo_vigente).first()
 
                     if prueba:
                         try:
-                            PruebaUsuario.objects.get_or_create(
-                                persona_id=persona.id,
-                                prueba_id=prueba.id,
-                                defaults={"estado": Estado.DISPONIBLE,"fecha_realizacion": None}
-                            )
-                        except Exception as e:
-                            print("No se pudo crear PruebaUsuario:", repr(e))
+                            crear_prueba_usuario_con_resultados(prueba=prueba,persona=persona)
+                        except ValidationError as e:
+                            messages.error(request, str(e))
+                            return render(request, "auth/register.html", {"form": form})
 
-            messages.success(request, "Cuenta creada correctamente")
-            return redirect("login")
+                    messages.success(request, "Cuenta creada correctamente")
+                    return redirect("login")
     else:
         form = RegistroForm()
 
