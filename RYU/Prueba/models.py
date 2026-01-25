@@ -31,7 +31,6 @@ class Opcion(models.Model):
 class Pregunta(models.Model):
     enunciado = models.TextField()
     banco = models.ForeignKey('BancoPreguntas', on_delete=models.CASCADE, related_name='preguntas')
-    opcion = models.ManyToManyField('Opcion', related_name='preguntas', blank=True)
 
     class Meta:
         verbose_name = "Pregunta"

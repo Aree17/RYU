@@ -1,2 +1,45 @@
 <h1>Bienvenido {{ request.user.username }}</h1>
+
+<hr>
+
+<h2>Pruebas disponibles</h2>
+
+{% if pruebas_disponibles %}
+  <ul>
+    {% for pu in pruebas_disponibles %}
+      <li>
+        <strong>{{ pu.prueba.titulo }}</strong><br>
+        Estado: {{ pu.estado }}<br>
+        <a href="{% url 'resolver_prueba' pu.id %}">Ir a la prueba</a>
+      </li>
+      <br>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No tienes pruebas disponibles.</p>
+{% endif %}
+
+<hr>
+
+<h2>Pruebas realizadas</h2>
+
+{% if pruebas_realizadas %}
+  <ul>
+    {% for pu in pruebas_realizadas %}
+      <li>
+        <strong>{{ pu.prueba.titulo }}</strong><br>
+        Fecha: {{ pu.fecha_realizacion }}<br>
+        <a href="{% url 'visualizar_resultados' pu.id %}">
+          Ver resultados
+        </a>
+      </li>
+      <br>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Aún no has realizado ninguna prueba.</p>
+{% endif %}
+
+<hr>
+
 <a href="{% url 'logout' %}">Cerrar sesión</a>

@@ -11,4 +11,6 @@ urlpatterns = [
     path('', root_view, name='root'),
     path('admin/', admin.site.urls),
     path('', include('Usuarios.urls')),
+    path('', include('Resultados.urls')),
+    path('', include('EstructuraAcademica.urls')),
 ]

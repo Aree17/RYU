@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Resolver prueba</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            gap: 30px;
+        }
+
+        .pregunta {
+            display: none;
+        }
+
+        .pregunta.activa {
+            display: block;
+        }
+
+        .navegacion {
+            margin-top: 20px;
+        }
+
+        .sidebar {
+            min-width: 180px;
+            border-left: 1px solid #ccc;
+            padding-left: 15px;
+        }
+
+        .sidebar button {
+            display: block;
+            width: 100%;
+            margin-bottom: 6px;
+            padding: 6px;
+            cursor: pointer;
+        }
+
+        .sidebar button.activa {
+            background-color: #3498db;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Prueba: {{ prueba_usuario.prueba.titulo }}</h2>
+
+<form method="post" action="{% url 'guardar_respuesta' prueba_usuario.id %}">
+    {% csrf_token %}
+
+    <div class="container">
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <div style="flex:1">
+
+            {% for pregunta in preguntas %}
+                <div class="pregunta {% if forloop.first %}activa{% endif %}" data-index="{{ forloop.counter0 }}">
+                    <fieldset>
+                        <legend>{{ forloop.counter }}. {{ pregunta.enunciado }}</legend>
+
+                        {% for opcion in opciones %}
+                            <label>
+                                <input type="radio"
+                                       name="pregunta_{{ pregunta.id }}"
+                                       value="{{ opcion.id }}"
+                                       required>
+                                {{ opcion.contenido }}
+                            </label><br>
+                        {% endfor %}
+                    </fieldset>
+
+                    <div class="navegacion">
+                        {% if not forloop.first %}
+                            <button type="button" onclick="anterior()">Anterior</button>
+                        {% endif %}
+
+                        {% if not forloop.last %}
+                            <button type="button" onclick="siguiente()">Siguiente</button>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+
+            <br>
+            <button type="submit">Enviar respuestas</button>
+        </div>
+
+        <!-- SIDEBAR DERECHA -->
+        <div class="sidebar">
+            <strong>Preguntas</strong>
+            <br><br>
+            {% for pregunta in preguntas %}
+                <button type="button"
+                        onclick="irAPregunta({{ forloop.counter0 }})"
+                        id="btn-{{ forloop.counter0 }}"
+                        class="{% if forloop.first %}activa{% endif %}">
+                    {{ forloop.counter }}
+                </button>
+            {% endfor %}
+        </div>
+
+    </div>
+</form>
+
+<script>
+    let actual = 0;
+    const preguntas = document.querySelectorAll(".pregunta");
+    const botones = document.querySelectorAll(".sidebar button");
+
+    function mostrarPregunta(index) {
+        preguntas[actual].classList.remove("activa");
+        botones[actual].classList.remove("activa");
+
+        actual = index;
+
+        preguntas[actual].classList.add("activa");
+        botones[actual].classList.add("activa");
+    }
+
+    function siguiente() {
+        if (actual < preguntas.length - 1) {
+            mostrarPregunta(actual + 1);
+        }
+    }
+
+    function anterior() {
+        if (actual > 0) {
+            mostrarPregunta(actual - 1);
+        }
+    }
+
+    function irAPregunta(index) {
+        mostrarPregunta(index);
+    }
+</script>
+
+</body>
+</html>
