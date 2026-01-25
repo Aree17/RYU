@@ -1,0 +1,27 @@
+<h1>Mi perfil</h1>
+
+<hr>
+
+<p><strong>Usuario:</strong> {{ user.username }}</p>
+<p><strong>Email:</strong> {{ user.email }}</p>
+
+<p><strong>Nombre:</strong> {{ cuenta.persona.nombres }}</p>
+<p><strong>Apellido:</strong> {{ cuenta.persona.apellidos }}</p>
+<p><strong>Cédula:</strong> {{ cuenta.persona.cedula }}</p>
+<p><strong>Rol:</strong> {{ cuenta.rol }}</p>
+
+<hr>
+
+<a href="{% url 'cambiar_password' %}">Cambiar contraseña</a>
+<br><br>
+<a href="{% url 'home' %}">Volver al inicio</a>
+
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == "success" %}
+      <p style="color: green; font-weight: bold;">
+        {{ message }}
+      </p>
+    {% endif %}
+  {% endfor %}
+{% endif %}
