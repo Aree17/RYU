@@ -14,12 +14,12 @@ class Persona(models.Model):
     cedula = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
-        return f"{self.nombres} {self.apellidos} ({self.cedula})"
+        return f"{self.nombres}({self.cedula})"
 
 
 class Cuenta(models.Model):
     persona = models.OneToOneField(Persona, on_delete=models.CASCADE)
-    usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     activo = models.BooleanField(default=True)
 
@@ -30,4 +30,4 @@ class Cuenta(models.Model):
     )
 
     def __str__(self):
-        return self.usuario.username
+        return self.user.username

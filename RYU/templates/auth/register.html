@@ -5,6 +5,12 @@
 </head>
 <body>
 
+{% if messages %}
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+{% endif %}
+
 <form method="POST">
     {% csrf_token %}
 
@@ -17,7 +23,6 @@
 
     <button type="submit">Registrar</button>
 </form>
-
 
 <a href="{% url 'login' %}">Ya tengo cuenta</a>
 

@@ -7,7 +7,7 @@ Pregunta, BancoPreguntas, Opcion
 class BancoPreguntasAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'carrera', 'periodos', 'vigente')
     list_filter = ('periodoVigente', 'carrera',)
-    search_fields = ('banco_preguntas',)
+    search_fields = ('nombre',)
 
     def periodos(self, obj):
         return ", ".join(p.nombre for p in obj.periodoVigente.all())
@@ -16,14 +16,12 @@ class BancoPreguntasAdmin(admin.ModelAdmin):
 
 @admin.register(Pregunta)
 class PreguntaAdmin(admin.ModelAdmin):
-    list_display = ('enunciado', 'banco','pregunta_opcion')
-
-
-    def pregunta_opcion(self, obj):
-        return ", ".join(p.contenido for p in obj.opcion.all())
-    pregunta_opcion.short_description = "Opcion"
+    list_display = ('enunciado', 'banco')
+    search_fields = ('enunciado',)
+    list_filter = ('banco',)
 
 @admin.register(Opcion)
 class OpcionAdmin(admin.ModelAdmin):
     list_display = ('contenido', 'valor')
-    list_filter = ('contenido','valor')
+    search_fields = ('contenido',)
+    list_filter = ('valor',)
