@@ -100,6 +100,30 @@ def logout_view(request):
 
 @login_required(login_url="login")
 def home(request):
-    return render(request, "auth/home.html")
+    if request.user.is_staff or request.user.is_superuser:
+        return redirect("dashboard_resultados")
+    try:
+        cuenta = request.user.cuenta
+    except Cuenta.DoesNotExist:
+        cuenta = None
+
+    pruebas_disponibles = []
+    pruebas_realizadas = []
+
+    if cuenta and cuenta.persona:
+        pruebas_disponibles = PruebaUsuario.objects.filter(
+            persona=cuenta.persona,
+            estado__in=[Estado.DISPONIBLE, Estado.ENPROCESO]
+        ).select_related("prueba")
+
+        pruebas_realizadas = PruebaUsuario.objects.filter(
+            persona=cuenta.persona,
+            estado=Estado.FINALIZADA
+        ).select_related("prueba")
+
+    return render(request, "auth/home.html", {
+        "pruebas_disponibles": pruebas_disponibles,
+        "pruebas_realizadas": pruebas_realizadas,
+    })
 
 

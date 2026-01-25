@@ -19,11 +19,7 @@ class Carrera(models.Model):
     perfil_ingreso = models.TextField()
     perfil_egreso = models.TextField()
 
-    facultad = models.ForeignKey(
-        Facultad,
-        on_delete=models.CASCADE,
-        related_name="carreras"
-    )
+    facultad = models.ForeignKey(Facultad,on_delete=models.CASCADE,related_name="carreras")
 
     class Meta:
         verbose_name = "Carrera"
