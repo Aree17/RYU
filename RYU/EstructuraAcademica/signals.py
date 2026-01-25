@@ -9,11 +9,9 @@ from Resultados.models import PruebaUsuario, Estado
 @receiver(post_save, sender=PeriodoAcademico)
 @transaction.atomic
 def cambiar_estado_prueba(sender, instance, **kwargs):
-    # Si el periodo sigue vigente, no hacemos nada
     if instance.vigencia:
         return
 
-    # Cancelar SOLO PruebaUsuario en estado DISPONIBLE
     PruebaUsuario.objects.filter(
         prueba__periodo_academico=instance,
         estado__in=[Estado.DISPONIBLE, Estado.ENPROCESO]
