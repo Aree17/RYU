@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class Facultad(models.Model):
     nombre = models.CharField(max_length=100)
@@ -60,3 +61,7 @@ class PeriodoAcademico(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    def calcular_vigencia(self):
+        hoy = timezone.now().date()
+        return self.fecha_inicio <= hoy <= self.fecha_fin
