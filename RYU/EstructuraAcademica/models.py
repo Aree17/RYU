@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class Facultad(models.Model):
     nombre = models.CharField(max_length=100)
@@ -19,11 +20,7 @@ class Carrera(models.Model):
     perfil_ingreso = models.TextField()
     perfil_egreso = models.TextField()
 
-    facultad = models.ForeignKey(
-        Facultad,
-        on_delete=models.CASCADE,
-        related_name="carreras"
-    )
+    facultad = models.ForeignKey(Facultad,on_delete=models.CASCADE,related_name="carreras")
 
     class Meta:
         verbose_name = "Carrera"
@@ -64,3 +61,7 @@ class PeriodoAcademico(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    def calcular_vigencia(self):
+        hoy = timezone.now().date()
+        return self.fecha_inicio <= hoy <= self.fecha_fin

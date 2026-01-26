@@ -1,7 +1,11 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-from .models import Cuenta
+from Usuarios.models import Cuenta, Rol
+from django.db import transaction
+from Resultados.models import Prueba, PruebaUsuario, Estado
+from EstructuraAcademica.models import PeriodoAcademico
+
 
 @receiver(post_save, sender=Cuenta)
 def crear_usuario(sender, instance, created, **kwargs):

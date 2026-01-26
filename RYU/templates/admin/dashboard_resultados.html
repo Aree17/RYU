@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <title>Dashboard de Resultados</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; }
+    .row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 16px; min-width: 320px; flex: 1; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; }
+    .filters { margin-bottom: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+  <h1>Dashboard de Resultados</h1>
+
+<form class="filters" method="get" id="filtrosForm">
+  <label>
+    Vista:
+    <select name="scope" id="scopeSelect">
+      <option value="global" {% if scope == "global" %}selected{% endif %}>Global (todas las pruebas)</option>
+      <option value="periodo" {% if scope == "periodo" %}selected{% endif %}>Por período académico</option>
+    </select>
+  </label>
+
+  <label>
+    Período:
+    <select name="periodo_id" id="periodoSelect">
+      <option value="">-- Selecciona --</option>
+      {% for p in periodos %}
+        <option value="{{ p.id }}" {% if periodo_id == p.id %}selected{% endif %}>{{ p }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <noscript><button type="submit">Aplicar</button></noscript>
+</form>
+
+<script>
+  const form = document.getElementById("filtrosForm");
+  const scopeSelect = document.getElementById("scopeSelect");
+  const periodoSelect = document.getElementById("periodoSelect");
+  if (scopeSelect.value === "global") periodoSelect.value = "";
+
+  scopeSelect.addEventListener("change", () => {
+    if (scopeSelect.value === "global") {
+      periodoSelect.value = "";
+      form.submit();
+      return;
+    }
+
+    if (periodoSelect.value) {
+      form.submit();
+    }
+  });
+
+  periodoSelect.addEventListener("change", () => {
+    if (periodoSelect.value) {
+      scopeSelect.value = "periodo";
+    }
+    form.submit();
+  });
+</script>
+
+  <div class="row">
+    <div class="card">
+      <h3>Top carreras ({{ scope }})</h3>
+      <table>
+        <thead>
+          <tr><th>Carrera</th><th>Total</th></tr>
+        </thead>
+        <tbody>
+          {% for r in top_carreras %}
+            <tr>
+              <td>{{ r.banco_pregunta__carrera__nombre }}</td>
+              <td>{{ r.total }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="2">Sin datos</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Tasa de finalización por prueba</h3>
+      <table>
+        <thead>
+          <tr><th>Prueba</th><th>Asignadas</th><th>Finalizadas</th><th>Tasa (%)</th></tr>
+        </thead>
+        <tbody>
+          {% for r in tasa_por_prueba %}
+            <tr>
+              <td>{{ r.prueba__titulo }}</td>
+              <td>{{ r.asignadas }}</td>
+              <td>{{ r.finalizadas }}</td>
+              <td>{{ r.tasa }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="4">Sin datos</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Promedio por carrera</h3>
+      <table>
+        <thead>
+          <tr><th>Carrera</th><th>Promedio</th></tr>
+        </thead>
+        <tbody>
+          {% for r in promedios %}
+            <tr>
+              <td>{{ r.banco_pregunta__carrera__nombre }}</td>
+              <td>{{ r.promedio|floatformat:2 }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="2">Sin datos</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+<div style="display:flex; justify-content:space-between; align-items:center;">
+  <a href="{% url 'logout' %}"
+     style="padding:8px 14px; background:#c0392b; color:white; text-decoration:none; border-radius:6px;">
+     Cerrar sesión
+  </a>
+</div>
+
+</body>
+</html>

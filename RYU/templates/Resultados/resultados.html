@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Resultados</title>
+</head>
+<body>
+
+<h2>Resultados - {{ prueba_usuario.prueba.titulo }}</h2>
+
+<table width="100%" border="0">
+  <tr>
+    <td width="35%" valign="top">
+      <h3>Top 3 carreras</h3>
+        {% if top3 %}
+          <ol>
+            {% for item in top3 %}
+              <li>
+                <strong>{{ item.carrera }}</strong><br>
+                Banco: {{ item.banco }}<br>
+                Puntaje: {{ item.puntaje }}<br>
+
+                {% if item.carrera_id %}
+                  <a href="{% url 'carrera_detail' item.carrera_id %}">
+                    Ver detalle de carrera
+                  </a>
+                {% endif %}
+              </li>
+              <br>
+            {% endfor %}
+          </ol>
+        {% else %}
+          <p>No hay resultados para mostrar.</p>
+        {% endif %}
+
+      <a href="{% url 'home' %}">Volver al inicio</a>
+    </td>
+    <td width="65%" valign="top">
+      <h3>Distribución por banco (Pastel)</h3>
+
+      <canvas id="pieCanvas" width="420" height="420"></canvas>
+
+      <div id="legend"></div>
+
+      <script>
+        const labels = {{ labels_json|safe }};
+        const values = {{ values_json|safe }};
+
+        const canvas = document.getElementById("pieCanvas");
+        const ctx = canvas.getContext("2d");
+        const legend = document.getElementById("legend");
+
+        const total = values.reduce((a, b) => a + b, 0);
+        if (!total) {
+          ctx.font = "16px Arial";
+          ctx.fillText("No hay puntajes para graficar.", 20, 30);
+        } else {
+          const cx = canvas.width / 2;
+          const cy = canvas.height / 2;
+          const radius = Math.min(cx, cy) - 10;
+          function colorForIndex(i, n) {
+            const hue = Math.round((360 * i) / n);
+            return `hsl(${hue}, 70%, 55%)`;
+          }
+
+          let startAngle = 0;
+          legend.innerHTML = "";
+
+          for (let i = 0; i < values.length; i++) {
+            const val = values[i] || 0;
+            const sliceAngle = (val / total) * (Math.PI * 2);
+            const endAngle = startAngle + sliceAngle;
+
+            const color = colorForIndex(i, values.length);
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, radius, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            const midAngle = startAngle + sliceAngle / 2;
+            const labelX = cx + Math.cos(midAngle) * (radius * 0.55);
+            const labelY = cy + Math.sin(midAngle) * (radius * 0.55);
+            const pct = ((val / total) * 100).toFixed(1);
+
+            ctx.fillStyle = "black";
+            ctx.font = "14px Arial";
+            if (pct >= 5) {
+              ctx.fillText(`${pct}%`, labelX - 12, labelY);
+            }
+
+            const item = document.createElement("div");
+            item.innerHTML = `<span style="display:inline-block;width:12px;height:12px;background:${color};margin-right:6px;"></span>
+                              ${labels[i]}: ${val} (${pct}%)`;
+            legend.appendChild(item);
+            startAngle = endAngle;
+          }
+        }
+      </script>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
