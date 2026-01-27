@@ -1,27 +1,104 @@
-<h1>Mi perfil</h1>
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi perfil – RYU</title>
 
-<hr>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 
-<p><strong>Usuario:</strong> {{ user.username }}</p>
-<p><strong>Email:</strong> {{ user.email }}</p>
+  <!-- CSS (STATIC) -->
+  <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+</head>
 
-<p><strong>Nombre:</strong> {{ cuenta.persona.nombres }}</p>
-<p><strong>Apellido:</strong> {{ cuenta.persona.apellidos }}</p>
-<p><strong>Cédula:</strong> {{ cuenta.persona.cedula }}</p>
-<p><strong>Rol:</strong> {{ cuenta.rol }}</p>
+<body>
 
-<hr>
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-left">
+      <img class="nav-logo" src="{% static 'image/logo-unl.png' %}" alt="Universidad Nacional de Loja">
+      <div class="nav-app">
+        <div class="nav-app-title">RYU</div>
+        <div class="nav-app-subtitle">Rutas y Universidades</div>
+      </div>
+    </div>
 
-<a href="{% url 'cambiar_password' %}">Cambiar contraseña</a>
-<br><br>
-<a href="{% url 'home' %}">Volver al inicio</a>
+    <div class="nav-center">
+      <div class="nav-title">MI PERFIL</div>
+    </div>
 
-{% if messages %}
-  {% for message in messages %}
-    {% if message.tags == "success" %}
-      <p style="color: green; font-weight: bold;">
-        {{ message }}
-      </p>
-    {% endif %}
-  {% endfor %}
-{% endif %}
+    <div class="nav-right">
+      <a class="nav-link" href="{% url 'home' %}">Volver</a>
+      <a class="nav-link nav-link-cta" href="{% url 'logout' %}">Cerrar sesión</a>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <section class="card">
+      <h1 class="title">Mi perfil</h1>
+      <p class="subtitle">Información de tu cuenta registrada en el sistema.</p>
+
+      <!-- MENSAJES -->
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            {% if message.tags == "success" %}
+              <p class="message message-success">{{ message }}</p>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="grid">
+        <div class="item">
+          <div class="label">Usuario</div>
+          <div class="value">{{ user.username }}</div>
+        </div>
+
+        <div class="item">
+          <div class="label">Email</div>
+          <div class="value">{{ user.email }}</div>
+        </div>
+
+        <div class="item">
+          <div class="label">Nombre</div>
+          <div class="value">{{ cuenta.persona.nombres }}</div>
+        </div>
+
+        <div class="item">
+          <div class="label">Apellido</div>
+          <div class="value">{{ cuenta.persona.apellidos }}</div>
+        </div>
+
+        <div class="item">
+          <div class="label">Cédula</div>
+          <div class="value">{{ cuenta.persona.cedula }}</div>
+        </div>
+
+        <div class="item">
+          <div class="label">Rol</div>
+          <div class="value">
+            <span class="chip">{{ cuenta.rol }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <a class="btn btn-outline" href="{% url 'cambiar_password' %}">Cambiar contraseña</a>
+        <a class="btn btn-primary" href="{% url 'home' %}">Volver al inicio</a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>Universidad Nacional de Loja • RYU (Rutas y Universidades)</p>
+    </footer>
+
+  </main>
+
+</body>
+</html>
