@@ -121,7 +121,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = (os.path.join(BASE_DIR,'RYU/static'),)
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -134,6 +136,6 @@ EMAIL_HOST_USER = 'ryu.dragobytes@gmail.com'
 EMAIL_HOST_PASSWORD = 'xpjc plse hvpl bvfc'
 
 LOGIN_REDIRECT_URL = '/home/'
-LOGOUT_REDIRECT_URL = '/login/'
+LOGOUT_REDIRECT_URL = '/landing/'
 LOGIN_URL = '/login/'
 PASSWORD_RESET_TIMEOUT = 3600  # 1 hora en s

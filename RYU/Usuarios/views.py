@@ -83,12 +83,9 @@ def login_view(request):
 
     return render(request, "auth/login.html")
 
-
-
-
 def logout_view(request):
     logout(request)
-    return redirect("login")
+    return redirect("landing")
 
 @login_required(login_url="login")
 def home(request):
@@ -144,3 +141,12 @@ def cambiar_password_view(request):
     return render(request, "auth/cambiar_password.html", {
         "form": form
     })
+
+def landing_view(request):
+    context = {
+        "titulo": "Mi Landing",
+        "subtitulo": "Una frase corta que explique el valor",
+        "cta_texto": "Empezar",
+        "cta_url": "/login/",
+    }
+    return render(request, "auth/landing.html", context)
