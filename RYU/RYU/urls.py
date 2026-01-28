@@ -5,10 +5,16 @@ from django.urls import path, include
 def root_view(request):
     if request.user.is_authenticated:
         return redirect("home")
-    return redirect("login")
+    return redirect("landing")
 
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect("home")
+    return redirect("landing")
 urlpatterns = [
     path('', root_view, name='root'),
     path('admin/', admin.site.urls),
     path('', include('Usuarios.urls')),
+    path('', include('Resultados.urls')),
+    path('', include('EstructuraAcademica.urls')),
 ]

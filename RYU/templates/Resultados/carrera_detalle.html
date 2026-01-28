@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ carrera.nombre }} – RYU</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'css/carrera_detail.css' %}">
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-left">
+      <img class="nav-logo" src="{% static 'image/logo-unl.png' %}" alt="UNL">
+      <div class="nav-title-wrap">
+        <div class="nav-title">RYU</div>
+        <div class="nav-subtitle">Rutas y Universidades</div>
+      </div>
+    </div>
+
+    <div class="nav-center">
+      <div class="nav-test">DETALLE DE CARRERA</div>
+    </div>
+
+    <div class="nav-right">
+      <a class="btn" href="javascript:history.back()">Volver</a>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <!-- HERO -->
+    <section class="hero-card">
+      <h1 class="hero-title">{{ carrera.nombre }}</h1>
+
+      <div class="chips">
+        <span class="chip">
+          Duración: <strong>{{ carrera.duracion_anios }}</strong> años
+        </span>
+      </div>
+
+      {% if carrera.descripcion %}
+        <p class="hero-text">{{ carrera.descripcion }}</p>
+      {% else %}
+        <p class="hero-text muted">No hay descripción disponible.</p>
+      {% endif %}
+    </section>
+
+    <!-- CONTENT -->
+    <section class="layout">
+
+      <article class="panel">
+        <h2 class="section-title">Perfil de ingreso</h2>
+        {% if carrera.perfil_ingreso %}
+          <p class="text">{{ carrera.perfil_ingreso }}</p>
+        {% else %}
+          <p class="text muted">No se ha registrado perfil de ingreso.</p>
+        {% endif %}
+      </article>
+
+      <article class="panel">
+        <h2 class="section-title">Perfil de egreso</h2>
+        {% if carrera.perfil_egreso %}
+          <p class="text">{{ carrera.perfil_egreso }}</p>
+        {% else %}
+          <p class="text muted">No se ha registrado perfil de egreso.</p>
+        {% endif %}
+      </article>
+
+    </section>
+
+    <footer class="footer">
+      <p>Universidad Nacional de Loja • RYU (Rutas y Universidades)</p>
+    </footer>
+
+  </main>
+
+</body>
+</html>

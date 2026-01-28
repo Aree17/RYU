@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resolver prueba</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'css/resolver_prueba.css' %}">
+</head>
+
+<body>
+
+  <!-- Navbar simple -->
+  <header class="navbar">
+    <div class="nav-left">
+      <img class="nav-logo" src="{% static 'image/logo-unl.png' %}" alt="UNL">
+      <div class="nav-title-wrap">
+        <div class="nav-title">RYU</div>
+        <div class="nav-subtitle">Prueba vocacional</div>
+      </div>
+    </div>
+
+    <div class="nav-center">
+      <h1 class="nav-test">Prueba: {{ prueba_usuario.prueba.titulo }}</h1>
+    </div>
+
+    <div class="nav-right">
+      <a href="{% url 'home' %}" class="btn nav-salida">Home</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <form method="post" action="{% url 'guardar_respuesta' prueba_usuario.id %}" id="form-prueba" class="layout">
+      {% csrf_token %}
+      <input type="hidden" name="indice_actual" id="indice_actual" value="0">
+
+      <!-- Columna izquierda (pregunta) -->
+      <section class="panel panel-main">
+        <div id="error-msg" class="error-msg" aria-live="polite"></div>
+
+        {% for pregunta in preguntas %}
+          <div class="pregunta" data-index="{{ forloop.counter0 }}" data-pregunta-id="{{ pregunta.id }}">
+            <fieldset class="box">
+              <legend class="legend">
+                <span class="qnum">{{ forloop.counter }}.</span> {{ pregunta.enunciado }}
+              </legend>
+
+              <div class="opciones">
+                {% for opcion in opciones %}
+                  <label class="opcion">
+                    <input
+                      type="radio"
+                      name="pregunta_{{ pregunta.id }}"
+                      value="{{ opcion.id }}"
+                    >
+                    <span class="opcion-text">{{ opcion.contenido }}</span>
+                  </label>
+                {% endfor %}
+              </div>
+            </fieldset>
+
+            <div class="navegacion">
+              {% if not forloop.first %}
+                <button type="button" class="btn" onclick="anterior()">Anterior</button>
+              {% endif %}
+
+              {% if not forloop.last %}
+                <button type="button" class="btn btn-primary" onclick="siguiente()">Siguiente</button>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+
+        <div class="submit-row">
+          <button type="submit" class="btn btn-primary btn-wide">Enviar respuestas</button>
+        </div>
+      </section>
+
+      <!-- Sidebar derecha -->
+      <aside class="panel panel-side">
+        <div class="side-head">
+          <div class="side-title">Preguntas</div>
+          <div class="side-hint">Verde = respondida</div>
+        </div>
+
+        <div class="side-grid">
+          {% for pregunta in preguntas %}
+            <button
+              type="button"
+              class="side-btn"
+              onclick="irAPregunta({{ forloop.counter0 }})"
+              id="btn-{{ forloop.counter0 }}"
+              aria-label="Ir a la pregunta {{ forloop.counter }}"
+            >
+              {{ forloop.counter }}
+            </button>
+          {% endfor %}
+        </div>
+      </aside>
+    </form>
+  </main>
+
+  <!-- Modal salida -->
+  <div class="modal-backdrop" id="modal-salida">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-salida">
+      <h3 id="titulo-salida" class="modal-title">¿Salir de la prueba?</h3>
+      <p class="modal-text">Si sales se cancelará la prueba y se perderá el proceso.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" id="btn-quedarme">Quedarme</button>
+        <button type="button" class="btn btn-danger" id="btn-salir">Salir de todos modos</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Variables desde Django (mínimo, limpio) -->
+  <script>
+    window.RYU_TEST = {
+      indiceInicial: {{ indice|default:0 }},
+      urlAbandonar: "{% url 'abandonar_prueba' prueba_usuario.id %}"
+    };
+  </script>
+
+  <!-- JS -->
+  <script src="{% static 'js/resolver_prueba.js' %}"></script>
+</body>
+</html>

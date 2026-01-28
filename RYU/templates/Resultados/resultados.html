@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resultados – RYU</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'css/resultados.css' %}">
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-left">
+      <img class="nav-logo" src="{% static 'image/logo-unl.png' %}" alt="UNL">
+      <div class="nav-title-wrap">
+        <div class="nav-title">RYU</div>
+        <div class="nav-subtitle">Rutas y Universidades</div>
+      </div>
+    </div>
+
+    <div class="nav-center">
+      <div class="nav-test">RESULTADOS</div>
+    </div>
+
+    <div class="nav-right">
+      <a class="btn" href="{% url 'home' %}">Volver</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div class="hero-card">
+        <h1 class="hero-title">Resultados – {{ prueba_usuario.prueba.titulo }}</h1>
+        <p class="hero-text">
+          Aquí tienes el <strong>Top 3</strong> y la <strong>distribución de afinidades</strong> por banco.
+        </p>
+      </div>
+    </section>
+
+    <section class="layout">
+      <!-- LEFT -->
+      <section class="panel">
+        <h2 class="section-title">Top 3 carreras</h2>
+
+        {% if top3 %}
+          <ol class="top3">
+            {% for item in top3 %}
+              <li class="top3-item">
+                <div class="top3-main">
+                  <div class="top3-name">{{ item.carrera }}</div>
+                  <div class="top3-meta">
+                    <span><strong>Banco:</strong> {{ item.banco }}</span>
+                    <span><strong>Puntaje:</strong> {{ item.puntaje }}</span>
+                  </div>
+                </div>
+
+                {% if item.carrera_id %}
+                  <a class="link" href="{% url 'carrera_detail' item.carrera_id %}">
+                    Ver detalle de carrera
+                  </a>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ol>
+        {% else %}
+          <div class="empty">
+            <p>No hay resultados para mostrar.</p>
+          </div>
+        {% endif %}
+
+        <div class="actions">
+          <a class="btn btn-primary" href="{% url 'home' %}">Volver al inicio</a>
+        </div>
+      </section>
+
+      <!-- RIGHT -->
+      <section class="panel">
+        <div class="chart-head">
+          <h2 class="section-title">Distribución por banco</h2>
+        </div>
+
+        <div class="chart-wrap">
+          <canvas id="pieCanvas" width="440" height="440"></canvas>
+
+          <div class="chart-center">
+            <div class="chart-center-title">Afinidades</div>
+            <div class="chart-center-value" id="totalValue">—</div>
+          </div>
+        </div>
+
+        <div class="legend" id="legend"></div>
+        <div class="chart-note" id="chartNote" style="display:none;"></div>
+      </section>
+    </section>
+  </main>
+
+  <!-- Variables desde Django -->
+  <script>
+    window.RYU_RESULTS = {
+      labels: {{ labels_json|safe }},
+      values: {{ values_json|safe }}
+    };
+  </script>
+
+  <!-- JS -->
+  <script src="{% static 'js/resultados.js' %}"></script>
+</body>
+</html>
