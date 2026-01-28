@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
+from Usuarios.models import Persona
+
 
 class RegistroForm(forms.Form):
     username = forms.CharField(max_length=150)
@@ -27,23 +29,42 @@ class RegistroForm(forms.Form):
         )
     )
 
+    def clean_username(self):
+        username = (self.cleaned_data.get("username") or "").strip()
+
+        if not username:
+            raise forms.ValidationError("El usuario es obligatorio.")
+
+        if User.objects.filter(username__iexact=username).exists():
+            raise forms.ValidationError("El usuario ya existe.")
+
+        return username
+
+    def clean_correo(self):
+        correo = (self.cleaned_data.get("correo") or "").strip()
+
+        if not correo:
+            raise forms.ValidationError("El correo es obligatorio.")
+
+        if Persona.objects.filter(correo__iexact=correo).exists():
+            raise forms.ValidationError("Este correo ya fue registrado.")
+
+        return correo
+
     def clean_cedula(self):
-        cedula = self.cleaned_data.get("cedula")
+        cedula = (self.cleaned_data.get("cedula") or "").strip()
 
         if not cedula:
-            raise forms.ValidationError(
-                "La cédula es obligatoria."
-            )
+            raise forms.ValidationError("La cédula es obligatoria.")
 
         if not cedula.isdigit():
-            raise forms.ValidationError(
-                "La cédula debe contener únicamente números."
-            )
+            raise forms.ValidationError("La cédula debe contener únicamente números.")
 
         if len(cedula) != 10:
-            raise forms.ValidationError(
-                "La cédula debe tener exactamente 10 dígitos."
-            )
+            raise forms.ValidationError("La cédula debe tener exactamente 10 dígitos.")
+
+        if Persona.objects.filter(cedula=cedula).exists():
+            raise forms.ValidationError("Esta cédula ya fue registrada.")
 
         return cedula
 
