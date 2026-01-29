@@ -32,7 +32,7 @@ class Carrera(models.Model):
 
 class MallaCurricular(models.Model):
     nombre = models.CharField(max_length=100)
-    ruta_pdf = models.CharField(max_length=255)
+    ruta_pdf = models.URLField(max_length=255)
     vigente = models.BooleanField(default=True)
 
     carrera = models.ForeignKey(

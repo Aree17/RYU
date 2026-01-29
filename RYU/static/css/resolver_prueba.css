@@ -369,3 +369,20 @@ body{
   .submit-row{justify-content:stretch}
   .btn-wide{width:100%}
 }
+.notificacion {
+  position: fixed;
+  bottom: 200px;
+  right: 700px;
+  background: #70b578;
+  color: #FFFFFF;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 9999;
+}
+
+.notificacion.error {
+  background: #dc3545;
+}

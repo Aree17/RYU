@@ -76,6 +76,21 @@
         {% endif %}
       </article>
 
+      <article class="panel">
+           <h3 class="section-title">Malla curricular</h3>
+          {% if malla_vigente %}
+          <a
+              href="{{ malla_vigente.ruta_pdf }}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-primary"
+              >
+              Ver malla curricular (PDF)
+              </a>
+          {% else %}
+           <p class="text muted">No se ha registrado la malla curricular.</p>
+          {% endif %}
+      </article>
     </section>
 
     <footer class="footer">
