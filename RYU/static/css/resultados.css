@@ -53,38 +53,82 @@ body{
 }
 
 .nav-logo{
-  height:44px;
+  height:50px;
   width:auto;
   object-fit:contain;
-  border-radius:10px;
+  border-radius:20px;
 }
 
-.nav-title-wrap{line-height:1.1}
-.nav-title{
+.nav-app{
+  display:flex;
+  flex-direction:column;
+  line-height:1.1;
+}
+
+.nav-app-title{
   font-family:var(--font-title);
   font-weight:800;
   letter-spacing:1px;
 }
-.nav-subtitle{
+
+.nav-app-subtitle{
   color:var(--muted);
   font-size:12.5px;
   font-weight:700;
 }
 
-.nav-center{display:flex; justify-content:center}
-.nav-test{
+.nav-center{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.nav-title{
   font-family:var(--font-title);
   font-weight:800;
   letter-spacing:1.4px;
   font-size:14px;
   text-transform:uppercase;
+  white-space:nowrap;
 }
 
 .nav-right{
   display:flex;
+  align-items:center;
   justify-content:flex-end;
+  gap:12px;
 }
 
+.nav-link{
+  text-decoration:none;
+  font-weight:800;
+  color:var(--text);
+  padding:10px 12px;
+  border-radius:12px;
+  transition: background .2s ease, color .2s ease, transform .15s ease, box-shadow .2s ease;
+}
+
+.nav-link:hover{
+  background:rgba(221,214,254,.55);
+}
+
+.nav-link-cta{
+  background:rgba(237,233,254,.95);
+  color:#5B21B6;
+  border:1px solid rgba(124,58,237,.25);
+}
+
+.nav-link-cta:hover{
+  background:var(--primary);
+  color:#fff;
+  transform:translateY(-1px);
+  box-shadow:0 14px 28px rgba(124,58,237,.22);
+}
+
+.nav-link:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 4px rgba(250,204,21,.45);
+}
 /* Buttons */
 .btn{
   padding:10px 14px;
@@ -196,7 +240,7 @@ body{
   font-size:18px;
 }
 
-/* ✅ Si por accidente sigue existiendo el subtítulo, lo ocultamos */
+/* Si por accidente sigue existiendo el subtítulo, lo ocultamos */
 .section-subtitle{
   display:none;
 }

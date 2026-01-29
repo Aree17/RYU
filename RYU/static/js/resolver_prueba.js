@@ -63,6 +63,19 @@
     setError(null);
     actualizarMarcadoRespondidas();
   }
+  function notificar(mensaje, tipo = "ok") {
+  const box = document.getElementById("notificacion");
+  if (!box) return;
+
+  box.textContent = mensaje;
+  box.className = `notificacion ${tipo}`;
+  box.style.opacity = "1";
+
+  setTimeout(() => {
+    box.style.opacity = "0";
+  }, 2000);
+}
+
 
   // Exponer funciones para los onclick del template
   window.siguiente = function () {
@@ -106,9 +119,24 @@
           return;
         }
       }
+      notificar("La prueba fue guardada con éxito ")
       enviado = true;
     });
   }
+  window.siguiente = function () {
+  if (!estaRespondida(actual)) {
+    setError("Responde esta pregunta antes de continuar.");
+    return;
+  }
+
+  // ✅ Notificación de guardado
+  notificar("Respuesta guardada correctamente ✔");
+
+  if (actual < preguntas.length - 1) {
+    mostrarPregunta(actual + 1);
+  }
+};
+
 
   // Modal de salida
   const modal = document.getElementById("modal-salida");
