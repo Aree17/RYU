@@ -1,136 +1,189 @@
+{% load static %}
 <!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Dashboard de Resultados</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 24px; }
-    .row { display: flex; gap: 16px; flex-wrap: wrap; }
-    .card { border: 1px solid #ddd; border-radius: 10px; padding: 16px; min-width: 320px; flex: 1; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; }
-    .filters { margin-bottom: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-  </style>
+
+  <link rel="stylesheet" href="{% static 'css/dashboard_resultados.css' %}">
 </head>
 <body>
 
-  <h1>Dashboard de Resultados</h1>
+  <header class="topbar">
+    <div>
+      <h1 class="title">Dashboard de Resultados</h1>
+      <p class="subtitle">
+        Visualiza métricas globales o por período académico.
+      </p>
+    </div>
 
-<form class="filters" method="get" id="filtrosForm">
-  <label>
-    Vista:
-    <select name="scope" id="scopeSelect">
-      <option value="global" {% if scope == "global" %}selected{% endif %}>Global (todas las pruebas)</option>
-      <option value="periodo" {% if scope == "periodo" %}selected{% endif %}>Por período académico</option>
-    </select>
-  </label>
+    <a class="btn btn-danger" href="{% url 'logout' %}">Cerrar sesión</a>
+  </header>
 
-  <label>
-    Período:
-    <select name="periodo_id" id="periodoSelect">
-      <option value="">-- Selecciona --</option>
-      {% for p in periodos %}
-        <option value="{{ p.id }}" {% if periodo_id == p.id %}selected{% endif %}>{{ p }}</option>
-      {% endfor %}
-    </select>
-  </label>
+  <section class="panel">
+    <form class="filters" method="get" id="filtrosForm">
+      <div class="field">
+        <label for="scopeSelect">Vista</label>
+        <select name="scope" id="scopeSelect">
+          <option value="global" {% if scope == "global" %}selected{% endif %}>
+            Global (todas las pruebas)
+          </option>
+          <option value="periodo" {% if scope == "periodo" %}selected{% endif %}>
+            Por período académico
+          </option>
+        </select>
+      </div>
 
-  <noscript><button type="submit">Aplicar</button></noscript>
-</form>
+      <div class="field">
+        <label for="periodoSelect">Período</label>
+        <select name="periodo_id" id="periodoSelect">
+          <option value="">-- Selecciona --</option>
+          {% for p in periodos %}
+            <option value="{{ p.id }}" {% if periodo_id == p.id %}selected{% endif %}>
+              {{ p }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
 
-<script>
-  const form = document.getElementById("filtrosForm");
-  const scopeSelect = document.getElementById("scopeSelect");
-  const periodoSelect = document.getElementById("periodoSelect");
-  if (scopeSelect.value === "global") periodoSelect.value = "";
+      <div class="field hint">
+        <span class="badge">Vista actual:</span>
+        <strong class="scope-pill">{{ scope|default:"global" }}</strong>
+        {% if scope == "periodo" and periodo_id %}
+          <span class="muted">• Período seleccionado</span>
+        {% endif %}
+      </div>
 
-  scopeSelect.addEventListener("change", () => {
-    if (scopeSelect.value === "global") {
-      periodoSelect.value = "";
+      <noscript>
+        <button type="submit" class="btn btn-primary">Aplicar</button>
+      </noscript>
+    </form>
+  </section>
+
+  <main class="grid">
+
+    <section class="card">
+      <div class="card-head">
+        <h3>Top carreras</h3>
+        <span class="chip">{{ scope }}</span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Carrera</th>
+              <th class="num">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in top_carreras %}
+              <tr>
+                <td>{{ r.banco_pregunta__carrera__nombre|default:"(Sin carrera)" }}</td>
+                <td class="num">{{ r.total }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="2" class="empty">Sin datos</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h3>Tasa de finalización por prueba</h3>
+        <span class="chip">Por prueba</span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Prueba</th>
+              <th class="num">Asignadas</th>
+              <th class="num">Finalizadas</th>
+              <th class="num">Tasa (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in tasa_por_prueba %}
+              <tr>
+                <td>{{ r.prueba__titulo|default:"(Sin título)" }}</td>
+                <td class="num">{{ r.asignadas }}</td>
+                <td class="num">{{ r.finalizadas }}</td>
+                <td class="num">
+                  <span class="pill">
+                    {{ r.tasa }}
+                  </span>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4" class="empty">Sin datos</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h3>Promedio por carrera</h3>
+        <span class="chip">Promedios</span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Carrera</th>
+              <th class="num">Promedio</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in promedios %}
+              <tr>
+                <td>{{ r.banco_pregunta__carrera__nombre|default:"(Sin carrera)" }}</td>
+                <td class="num">
+                  <span class="pill pill-ok">{{ r.promedio|floatformat:2 }}</span>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="2" class="empty">Sin datos</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <span class="muted">Sistema de resultados • {{ request.user.username }}</span>
+  </footer>
+
+  <script>
+    const form = document.getElementById("filtrosForm");
+    const scopeSelect = document.getElementById("scopeSelect");
+    const periodoSelect = document.getElementById("periodoSelect");
+
+    if (scopeSelect.value === "global") periodoSelect.value = "";
+
+    scopeSelect.addEventListener("change", () => {
+      if (scopeSelect.value === "global") {
+        periodoSelect.value = "";
+        form.submit();
+        return;
+      }
+      if (periodoSelect.value) form.submit();
+    });
+
+    periodoSelect.addEventListener("change", () => {
+      if (periodoSelect.value) scopeSelect.value = "periodo";
       form.submit();
-      return;
-    }
-
-    if (periodoSelect.value) {
-      form.submit();
-    }
-  });
-
-  periodoSelect.addEventListener("change", () => {
-    if (periodoSelect.value) {
-      scopeSelect.value = "periodo";
-    }
-    form.submit();
-  });
-</script>
-
-  <div class="row">
-    <div class="card">
-      <h3>Top carreras ({{ scope }})</h3>
-      <table>
-        <thead>
-          <tr><th>Carrera</th><th>Total</th></tr>
-        </thead>
-        <tbody>
-          {% for r in top_carreras %}
-            <tr>
-              <td>{{ r.banco_pregunta__carrera__nombre }}</td>
-              <td>{{ r.total }}</td>
-            </tr>
-          {% empty %}
-            <tr><td colspan="2">Sin datos</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-
-    <div class="card">
-      <h3>Tasa de finalización por prueba</h3>
-      <table>
-        <thead>
-          <tr><th>Prueba</th><th>Asignadas</th><th>Finalizadas</th><th>Tasa (%)</th></tr>
-        </thead>
-        <tbody>
-          {% for r in tasa_por_prueba %}
-            <tr>
-              <td>{{ r.prueba__titulo }}</td>
-              <td>{{ r.asignadas }}</td>
-              <td>{{ r.finalizadas }}</td>
-              <td>{{ r.tasa }}</td>
-            </tr>
-          {% empty %}
-            <tr><td colspan="4">Sin datos</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-
-    <div class="card">
-      <h3>Promedio por carrera</h3>
-      <table>
-        <thead>
-          <tr><th>Carrera</th><th>Promedio</th></tr>
-        </thead>
-        <tbody>
-          {% for r in promedios %}
-            <tr>
-              <td>{{ r.banco_pregunta__carrera__nombre }}</td>
-              <td>{{ r.promedio|floatformat:2 }}</td>
-            </tr>
-          {% empty %}
-            <tr><td colspan="2">Sin datos</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-<div style="display:flex; justify-content:space-between; align-items:center;">
-  <a href="{% url 'logout' %}"
-     style="padding:8px 14px; background:#c0392b; color:white; text-decoration:none; border-radius:6px;">
-     Cerrar sesión
-  </a>
-</div>
+    });
+  </script>
 
 </body>
 </html>

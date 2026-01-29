@@ -1,45 +1,116 @@
-<h1>Bienvenido {{ request.user.username }}</h1>
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home – RYU</title>
 
-<hr>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 
-<h2>Pruebas disponibles</h2>
+  <!-- CSS (STATIC) -->
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
 
-{% if pruebas_disponibles %}
-  <ul>
-    {% for pu in pruebas_disponibles %}
-      <li>
-        <strong>{{ pu.prueba.titulo }}</strong><br>
-        Estado: {{ pu.estado }}<br>
-        <a href="{% url 'resolver_prueba' pu.id %}">Ir a la prueba</a>
-      </li>
-      <br>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>No tienes pruebas disponibles.</p>
-{% endif %}
+<body>
 
-<hr>
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-left">
+      <img class="nav-logo" src="{% static 'image/logo-unl.png' %}" alt="Universidad Nacional de Loja">
+      <div class="nav-app">
+        <div class="nav-app-title">RYU</div>
+        <div class="nav-app-subtitle">Rutas y Universidades</div>
+      </div>
+    </div>
 
-<h2>Pruebas realizadas</h2>
+    <div class="nav-center">
+      <div class="nav-title">PANEL DEL ESTUDIANTE</div>
+    </div>
 
-{% if pruebas_realizadas %}
-  <ul>
-    {% for pu in pruebas_realizadas %}
-      <li>
-        <strong>{{ pu.prueba.titulo }}</strong><br>
-        Fecha: {{ pu.fecha_realizacion }}<br>
-        <a href="{% url 'visualizar_resultados' pu.id %}">
-          Ver resultados
-        </a>
-      </li>
-      <br>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Aún no has realizado ninguna prueba.</p>
-{% endif %}
+    <div class="nav-right">
+      <a class="nav-link" href="{% url 'perfil' %}">Mi perfil</a>
+      <a class="nav-link nav-link-cta" href="{% url 'logout' %}">Cerrar sesión</a>
+    </div>
+  </header>
 
-<hr>
+  <main class="page">
 
-<a href="{% url 'logout' %}">Cerrar sesión</a>
+    <!-- SALUDO -->
+    <section class="hero">
+      <div class="hero-card">
+        <h1 class="hero-title">Bienvenido, {{ request.user.username }}</h1>
+        <p class="hero-text">
+          Aquí podrás ver las <strong>pruebas disponibles</strong> para resolver y tus <strong>pruebas realizadas</strong> con acceso a resultados.
+        </p>
+      </div>
+    </section>
+
+    <!-- PRUEBAS DISPONIBLES -->
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">Pruebas disponibles</h2>
+        <p class="section-subtitle">Selecciona una prueba para iniciar.</p>
+      </div>
+
+      {% if pruebas_disponibles %}
+        <div class="grid">
+          {% for pu in pruebas_disponibles %}
+            <article class="card">
+              <h3 class="card-title">{{ pu.prueba.titulo }}</h3>
+              <p class="meta"><span class="tag">Estado:</span> {{ pu.estado }}</p>
+
+              <div class="actions">
+                <a class="btn btn-primary" href="{% url 'resolver_prueba' pu.id %}">Ir a la prueba</a>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty">
+          <p>No tienes pruebas disponibles.</p>
+        </div>
+      {% endif %}
+    </section>
+
+    <!-- PRUEBAS REALIZADAS -->
+    <section class="section">
+      <div class="section-head">
+        <h2 class="section-title">Pruebas realizadas</h2>
+        <p class="section-subtitle">Revisa tus resultados cuando lo necesites.</p>
+      </div>
+
+      {% if pruebas_realizadas %}
+        <div class="grid">
+          {% for pu in pruebas_realizadas %}
+            <article class="card">
+              <h3 class="card-title">{{ pu.prueba.titulo }}</h3>
+              <p class="meta">
+                <span class="tag">Fecha:</span>
+                {{ pu.fecha_realizacion }}
+              </p>
+
+              <div class="actions">
+                <a class="btn btn-outline" href="{% url 'visualizar_resultados' pu.id %}">Ver resultados</a>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty">
+          <p>Aún no has realizado ninguna prueba.</p>
+        </div>
+      {% endif %}
+    </section>
+
+    <footer class="footer">
+      <p>Universidad Nacional de Loja • RYU (Rutas y Universidades)</p>
+    </footer>
+
+  </main>
+
+</body>
+</html>

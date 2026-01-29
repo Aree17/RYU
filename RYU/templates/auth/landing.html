@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RYU (Rutas y Universidades) – Prueba Vocacional UNL</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- CSS (STATIC) -->
+  <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-left">
+      <!-- Cambia el nombre del archivo por el que tengas en static/image/ -->
+      <img class="nav-logo" src="{% static 'image/logo-unl.png' %}" alt="Universidad Nacional de Loja">
+    </div>
+
+    <div class="nav-center">
+      <div class="nav-title">RYU (RUTAS Y UNIVERSIDADES)</div>
+    </div>
+
+    <div class="nav-right">
+      <!-- Opcional: enlaces rápidos -->
+      <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
+      <a class="nav-link nav-link-cta" href="{% url 'register' %}">Registrarse</a>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL (como tu garabato: panel centrado) -->
+  <main class="page">
+    <section class="hero-card">
+      <h1 class="hero-title">Prueba Vocacional para la Universidad Nacional de Loja</h1>
+
+      <p class="hero-text">
+        <strong>RYU</strong> es una prueba vocacional diseñada para ayudarte a identificar tus intereses,
+        habilidades y afinidad con las áreas académicas disponibles. Responde con calma y sinceridad:
+        al finalizar, verás un resumen que te orientará a tomar una decisión más segura sobre tu futuro universitario.
+      </p>
+
+      <p class="hero-subtext">
+        Para empezar, inicia sesión. Si aún no tienes una cuenta, regístrate y accede a la prueba.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="{% url 'login' %}">Iniciar sesión</a>
+        <a class="btn btn-outline" href="{% url 'register' %}">Registrarse</a>
+      </div>
+    </section>
+
+    <!-- BLOQUE PEQUEÑO INFERIOR (opcional, simple) -->
+    <section class="mini-info">
+      <div class="mini-item">
+        <h3>¿Qué obtienes?</h3>
+        <p>Una orientación clara según tus respuestas.</p>
+      </div>
+
+      <div class="mini-item">
+        <h3>¿Cuánto dura?</h3>
+        <p>Es rápida y guiada paso a paso.</p>
+      </div>
+
+      <div class="mini-item">
+        <h3>Recomendación</h3>
+        <p>Hazla sin interrupciones para un mejor resultado.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Universidad Nacional de Loja • RYU (Rutas y Universidades) • Prueba Vocacional</p>
+  </footer>
+
+  <!-- JS (STATIC) -->
+  <script src="{% static 'js/landing.js' %}"></script>
+</body>
+</html>
