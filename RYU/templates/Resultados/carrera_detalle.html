@@ -21,9 +21,9 @@
   <header class="navbar">
     <div class="nav-left">
       <img class="nav-logo" src="{% static 'image/logo-unl.png' %}" alt="UNL">
-      <div class="nav-title-wrap">
-        <div class="nav-title">RYU</div>
-        <div class="nav-subtitle">Rutas y Universidades</div>
+      <div class="nav-app">
+        <div class="nav-app-title">RYU</div>
+        <div class="nav-app-subtitle">Rutas y Universidades</div>
       </div>
     </div>
 
@@ -32,7 +32,8 @@
     </div>
 
     <div class="nav-right">
-      <a class="btn" href="javascript:history.back()">Volver</a>
+      <a class="nav-link" href="{% url 'perfil' %}">Mi perfil</a>
+      <a class="nav-link nav-link-cta" href="javascript:history.back()">Volver</a>
     </div>
   </header>
 
@@ -83,7 +84,7 @@
               href="{{ malla_vigente.ruta_pdf }}"
               target="_blank"
               rel="noopener noreferrer"
-              class="btn btn-primary"
+              class="nav-link nav-link-cta"
               >
               Ver malla curricular (PDF)
               </a>

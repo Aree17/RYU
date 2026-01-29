@@ -21,19 +21,19 @@
   <header class="navbar">
     <div class="nav-left">
       <img class="nav-logo" src="{% static 'image/logo-unl.png' %}" alt="UNL">
-      <div class="nav-title-wrap">
-        <div class="nav-title">RYU</div>
-        <div class="nav-subtitle">Rutas y Universidades</div>
+      <div class="nav-app">
+        <div class="nav-app-title">RYU</div>
+        <div class="nav-app-subtitle">Rutas y Universidades</div>
       </div>
     </div>
 
     <div class="nav-center">
-      <div class="nav-test">RESULTADOS</div>
+      <div class="nav-title">RESULTADOS</div>
     </div>
 
     <div class="nav-right">
-      <a class="nav-link" href="{% url 'perfil' %}">Mi perfil</a>
-      <a class="btn" href="{% url 'home' %}">Volver</a>
+      <a class="nav-link " href="{% url 'perfil' %}">Mi perfil</a>
+      <a class="nav-link nav-link-cta" href="{% url 'home' %}">Volver</a>
     </div>
   </header>
 
@@ -78,7 +78,7 @@
         {% endif %}
 
         <div class="actions">
-          <a class="btn btn-primary" href="{% url 'home' %}">Volver al inicio</a>
+          <a class="nav-link nav-link-cta" href="{% url 'home' %}">Volver al inicio</a>
         </div>
       </section>
 
