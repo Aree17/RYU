@@ -57,7 +57,7 @@
     const v = Number(val) || 0;
     const fraction = v / total;
     return {
-      label: labels[i] ?? `Banco ${i + 1}`,
+      label: labels[i] ? labels[i].replace(/^BP2\s*-\s*/, '').replace(/^\w/, c => c.toUpperCase()) : `Carrera ${i + 1}`,
       value: v,
       fraction,
       color: colorForIndex(i, values.length),
