@@ -163,6 +163,30 @@ body{
 .field-error.strong{
   font-weight:800;
 }
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 48px;
+}
+
+#showHidePassword {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-48%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #555;
+}
+
+
+#showHidePassword:hover {
+  color: #000;
+}
 
 /* Button */
 .btn{
@@ -214,4 +238,3 @@ body{
 .link:hover{
   background:rgba(221,214,254,.55);
 }
-
