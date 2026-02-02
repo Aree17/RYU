@@ -96,8 +96,8 @@ def visualizar_resultados_view(request, prueba_usuario_id):
     top3 = [
         {
             "carrera_id": r.banco_pregunta.carrera.id if r.banco_pregunta.carrera else None,
-            "carrera": str(r.banco_pregunta.carrera) if r.banco_pregunta.carrera else "Sin carrera",
-            "banco": r.banco_pregunta.nombre,
+            "carrera": r.banco_pregunta.carrera.nombre if r.banco_pregunta.carrera else "Sin carrera",
+            "banco": r.banco_pregunta.carrera.nombre,
             "puntaje": int(r.resultado_total or 0),
         }
         for r in resultados[:3]
