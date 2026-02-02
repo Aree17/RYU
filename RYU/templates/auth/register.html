@@ -13,6 +13,8 @@
 
     <!-- CSS (STATIC) -->
     <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
@@ -86,9 +88,13 @@
         </div>
 
         <!-- CONTRASEÑA -->
-        <div class="field">
+        <div class="field password-section">
           <label class="label" for="id_password">Contraseña</label>
-          <input id="id_password" type="password" name="password" placeholder="Contraseña" required class="input">
+        <div class="password-wrapper">
+            <input id="id_password" type="password" name="password" placeholder="Contraseña" required class="input">
+           <i id="showHidePassword"
+           class="fa-solid fa-eye"></i>
+        </div>
 
           {% if form.password.help_text %}
             <small class="help">{{ form.password.help_text|safe }}</small>
@@ -101,11 +107,11 @@
 
         <button type="submit" class="btn btn-primary">Registrar</button>
       </form>
-
       <div class="links">
         <a class="link" href="{% url 'login' %}">Ya tengo cuenta</a>
       </div>
     </section>
   </main>
+<script src="{% static 'js/mostrar_contraseña.js' %}"></script>
 </body>
 </html>
