@@ -30,10 +30,6 @@
     <div class="nav-center">
       <h1 class="nav-test">Prueba: {{ prueba_usuario.prueba.titulo }}</h1>
     </div>
-
-    <div class="nav-right">
-      <a href="{% url 'home' %}" class="btn nav-salida">Home</a>
-    </div>
   </header>
 
   <main class="page">
@@ -102,6 +98,9 @@
               {{ forloop.counter }}
             </button>
           {% endfor %}
+        </div>
+        <div class="submit-row">
+          <a href="{% url 'home' %}" class="btn btn-primary btn-wide">Abandonar Prueba</a>
         </div>
       </aside>
     </form>

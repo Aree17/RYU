@@ -13,6 +13,8 @@
 
     <!-- CSS (STATIC) -->
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
@@ -29,7 +31,11 @@
         <input id="id_username" type="text" name="username" placeholder="Usuario" required class="input">
 
         <label class="label" for="id_password">Contraseña</label>
+        <div class="password-wrapper">
         <input id="id_password" type="password" name="password" placeholder="Contraseña" required class="input">
+            <i id="showHidePassword"
+           class="fa-solid fa-eye"></i>
+        </div>
 
         <button type="submit" class="btn btn-primary">Ingresar</button>
       </form>
@@ -48,6 +54,6 @@
       {% endif %}
     </section>
   </main>
-
+<script src="{% static 'js/mostrar_contraseña.js' %}"></script>
 </body>
 </html>
