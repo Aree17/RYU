@@ -79,18 +79,21 @@
 
       <article class="panel">
            <h3 class="section-title">Malla curricular</h3>
-          {% if malla_vigente %}
-          <a
-              href="{{ malla_vigente.ruta_pdf }}"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="nav-link nav-link-cta"
-              >
-              Ver malla curricular (PDF)
-              </a>
-          {% else %}
-           <p class="text muted">No se ha registrado la malla curricular.</p>
-          {% endif %}
+            {% if malla_vigente %}
+              {% with pdf=malla_vigente.ruta_pdf %}
+                <a
+                  href="{% if pdf and pdf|slice:":8" == "https://" %}{{ pdf }}{% elif pdf and pdf|slice:":7" == "http://" %}{{ pdf }}{% else %}https://{{ pdf }}{% endif %}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="nav-link nav-link-cta"
+                >
+                  Ver malla curricular (PDF)
+                </a>
+              {% endwith %}
+            {% else %}
+              <p class="text muted">No se ha registrado la malla curricular.</p>
+            {% endif %}
+
       </article>
     </section>
 

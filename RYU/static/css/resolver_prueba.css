@@ -262,7 +262,7 @@ body{
   border-color:rgba(22,163,74,.92);
 }
 
-/* Buttons */
+
 .btn{
   padding:10px 14px;
   border-radius:14px;
@@ -287,6 +287,16 @@ body{
   background:var(--primary);
   color:#fff;
   border-color:var(--primary);
+}
+.nav-salida{
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.nav-salida:hover{
+  background: #6D28D9;
+  border-color: #6D28D9;
+  box-shadow: 0 16px 32px rgba(124,58,237,.22);
 }
 
 .btn-primary:hover{
