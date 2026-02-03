@@ -1,92 +1,117 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registro</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- CSS (STATIC) -->
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
+  <main class="page">
+    <section class="card">
+      <h2 class="title">Registro de usuario</h2>
+      <p class="subtitle">Crea tu cuenta para acceder a la prueba vocacional.</p>
 
-<h2>Registro de usuario</h2>
+      <!-- MENSAJES GENERALES -->
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            <p class="message {% if message.tags == 'success' %}message-success{% else %}message-error{% endif %}">
+              {{ message }}
+            </p>
+          {% endfor %}
+        </div>
+      {% endif %}
 
-<!-- MENSAJES GENERALES -->
-{% if messages %}
-    {% for message in messages %}
-        <p style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %};">
-            {{ message }}
-        </p>
-    {% endfor %}
-{% endif %}
+      <form method="POST" class="form">
+        {% csrf_token %}
 
-<form method="POST">
-    {% csrf_token %}
+        <!-- USUARIO -->
+        <div class="field">
+          <label class="label" for="id_username">Usuario</label>
+          <input id="id_username" type="text" name="username" placeholder="Usuario" required class="input">
+          {% for error in form.username.errors %}
+            <p class="field-error">{{ error }}</p>
+          {% endfor %}
+        </div>
 
-    <!-- USUARIO -->
-    <input type="text" name="username" placeholder="Usuario" required><br>
-    {% for error in form.username.errors %}
-        <p style="color:red;">{{ error }}</p>
-    {% endfor %}
+        <!-- NOMBRES -->
+        <div class="field">
+          <label class="label" for="id_nombres">Nombres</label>
+          <input id="id_nombres" type="text" name="nombres" placeholder="Nombres" required class="input">
+          {% for error in form.nombres.errors %}
+            <p class="field-error">{{ error }}</p>
+          {% endfor %}
+        </div>
 
-    <br>
+        <!-- APELLIDOS -->
+        <div class="field">
+          <label class="label" for="id_apellidos">Apellidos</label>
+          <input id="id_apellidos" type="text" name="apellidos" placeholder="Apellidos" required class="input">
+          {% for error in form.apellidos.errors %}
+            <p class="field-error">{{ error }}</p>
+          {% endfor %}
+        </div>
 
-    <!-- NOMBRES -->
-    <input type="text" name="nombres" placeholder="Nombres" required><br>
-    {% for error in form.nombres.errors %}
-        <p style="color:red;">{{ error }}</p>
-    {% endfor %}
+        <!-- CORREO -->
+        <div class="field">
+          <label class="label" for="id_correo">Correo</label>
+          <input id="id_correo" type="email" name="correo" placeholder="Correo" required class="input">
+          {% for error in form.correo.errors %}
+            <p class="field-error">{{ error }}</p>
+          {% endfor %}
+        </div>
 
-    <br>
+        <!-- CÉDULA -->
+        <div class="field">
+          <label class="label" for="id_cedula">Cédula</label>
+          <input id="id_cedula" type="text" name="cedula" placeholder="Cédula" required class="input">
 
-    <!-- APELLIDOS -->
-    <input type="text" name="apellidos" placeholder="Apellidos" required><br>
-    {% for error in form.apellidos.errors %}
-        <p style="color:red;">{{ error }}</p>
-    {% endfor %}
+          {% if form.cedula.help_text %}
+            <small class="help">{{ form.cedula.help_text }}</small>
+          {% endif %}
 
-    <br>
+          {% for error in form.cedula.errors %}
+            <p class="field-error strong">{{ error }}</p>
+          {% endfor %}
+        </div>
 
-    <!-- CORREO -->
-    <input type="email" name="correo" placeholder="Correo" required><br>
-    {% for error in form.correo.errors %}
-        <p style="color:red;">{{ error }}</p>
-    {% endfor %}
+        <!-- CONTRASEÑA -->
+        <div class="field password-section">
+          <label class="label" for="id_password">Contraseña</label>
+        <div class="password-wrapper">
+            <input id="id_password" type="password" name="password" placeholder="Contraseña" required class="input">
+           <i id="showHidePassword"
+           class="fa-solid fa-eye"></i>
+        </div>
 
-    <br>
+          {% if form.password.help_text %}
+            <small class="help">{{ form.password.help_text|safe }}</small>
+          {% endif %}
 
-    <!-- CÉDULA -->
-    <input type="text" name="cedula" placeholder="Cédula" required><br>
+          {% for error in form.password.errors %}
+            <p class="field-error strong">{{ error }}</p>
+          {% endfor %}
+        </div>
 
-    <small style="color:#555; display:block; margin-bottom:5px;">
-        {{ form.cedula.help_text }}
-    </small>
-
-    {% for error in form.cedula.errors %}
-        <p style="color:red; font-weight:bold;">
-            {{ error }}
-        </p>
-    {% endfor %}
-
-    <br>
-
-    <!-- CONTRASEÑA -->
-    <input type="password" name="password" placeholder="Contraseña" required><br>
-
-    <small style="color:#555; display:block; margin-bottom:5px;">
-        {{ form.password.help_text|safe }}
-    </small>
-
-    {% for error in form.password.errors %}
-        <p style="color:red; font-weight:bold;">
-            {{ error }}
-        </p>
-    {% endfor %}
-
-    <br>
-
-    <button type="submit">Registrar</button>
-</form>
-
-<br>
-<a href="{% url 'login' %}">Ya tengo cuenta</a>
-
+        <button type="submit" class="btn btn-primary">Registrar</button>
+      </form>
+      <div class="links">
+        <a class="link" href="{% url 'login' %}">Ya tengo cuenta</a>
+      </div>
+    </section>
+  </main>
+<script src="{% static 'js/mostrar_contraseña.js' %}"></script>
 </body>
 </html>

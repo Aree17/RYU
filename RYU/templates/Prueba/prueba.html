@@ -1,120 +1,65 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Resolver prueba</title>
 
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    .container { display: flex; gap: 30px; }
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 
-    .pregunta { display: none; }
-    .pregunta.activa { display: block; }
-
-    .navegacion { margin-top: 20px; display: flex; gap: 10px; }
-
-    .sidebar {
-      min-width: 180px;
-      border-left: 1px solid #ccc;
-      padding-left: 15px;
-      max-height: 80vh;
-      overflow: auto;
-    }
-
-    .sidebar button {
-      display: block;
-      width: 100%;
-      margin-bottom: 6px;
-      padding: 6px;
-      cursor: pointer;
-      border: 1px solid #ccc;
-      background: #f3f3f3;
-      border-radius: 6px;
-      text-align: center;
-    }
-
-    .sidebar button.activa { background-color: #3498db; color: white; border-color: #3498db; }
-    .sidebar button.respondida { background-color: #2ecc71; color: white; border-color: #2ecc71; }
-
-    .acciones-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-
-    .btn {
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      cursor: pointer;
-      background: #f3f3f3;
-    }
-
-    .btn-primary { background: #3498db; color: white; border-color: #3498db; }
-    .btn-danger { background: #e74c3c; color: white; border-color: #e74c3c; }
-
-    .error-msg {
-      margin-top: 10px;
-      color: #c0392b;
-      font-weight: bold;
-      display: none;
-    }
-
-    /* Modal */
-    .modal-backdrop {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.45);
-      display: none;
-      align-items: center; justify-content: center;
-      z-index: 9999;
-    }
-    .modal {
-      background: white;
-      width: min(520px, 92vw);
-      border-radius: 10px;
-      padding: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
-    }
-    .modal h3 { margin: 0 0 10px; }
-    .modal p { margin: 0 0 16px; line-height: 1.35; }
-    .modal .actions { display: flex; gap: 10px; justify-content: flex-end; }
-  </style>
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'css/resolver_prueba.css' %}">
 </head>
 
 <body>
 
-  <div class="acciones-top">
-    <h2 style="margin:0;">Prueba: {{ prueba_usuario.prueba.titulo }}</h2>
-    <a href="{% url 'home' %}" class="btn nav-salida">Home</a>
-  </div>
+  <!-- Navbar simple -->
+  <header class="navbar">
+    <div class="nav-left">
+      <img class="nav-logo" src="{% static 'image/logo-unl.png' %}" alt="UNL">
+      <div class="nav-title-wrap">
+        <div class="nav-title">RYU</div>
+        <div class="nav-subtitle">Prueba vocacional</div>
+      </div>
+    </div>
 
-  <form method="post" action="{% url 'guardar_respuesta' prueba_usuario.id %}" id="form-prueba">
-    {% csrf_token %}
-    <input type="hidden" name="indice_actual" id="indice_actual" value="0">
+    <div class="nav-center">
+      <h1 class="nav-test">Prueba: {{ prueba_usuario.prueba.titulo }}</h1>
+    </div>
+  </header>
 
-    <div class="container">
+  <main class="page">
+    <form method="post" action="{% url 'guardar_respuesta' prueba_usuario.id %}" id="form-prueba" class="layout">
+      {% csrf_token %}
+      <input type="hidden" name="indice_actual" id="indice_actual" value="0">
 
-      <div style="flex:1">
-
-        <div id="error-msg" class="error-msg"></div>
+      <!-- Columna izquierda (pregunta) -->
+      <section class="panel panel-main">
+        <div id="error-msg" class="error-msg" aria-live="polite"></div>
 
         {% for pregunta in preguntas %}
           <div class="pregunta" data-index="{{ forloop.counter0 }}" data-pregunta-id="{{ pregunta.id }}">
-            <fieldset>
-              <legend>{{ forloop.counter }}. {{ pregunta.enunciado }}</legend>
+            <fieldset class="box">
+              <legend class="legend">
+                <span class="qnum">{{ forloop.counter }}.</span> {{ pregunta.enunciado }}
+              </legend>
 
-              {% for opcion in opciones %}
-                <label>
-                  <input
-                    type="radio"
-                    name="pregunta_{{ pregunta.id }}"
-                    value="{{ opcion.id }}"
-                  >
-                  {{ opcion.contenido }}
-                </label><br>
-              {% endfor %}
+              <div class="opciones">
+                {% for opcion in opciones %}
+                  <label class="opcion">
+                    <input
+                      type="radio"
+                      name="pregunta_{{ pregunta.id }}"
+                      value="{{ opcion.id }}"
+                    >
+                    <span class="opcion-text">{{ opcion.contenido }}</span>
+                  </label>
+                {% endfor %}
+              </div>
             </fieldset>
 
             <div class="navegacion">
@@ -129,208 +74,60 @@
           </div>
         {% endfor %}
 
-        <br>
-        <button type="submit" class="btn btn-primary">Enviar respuestas</button>
-      </div>
+        <div class="submit-row">
+          <button type="submit" class="btn btn-primary btn-wide">Enviar respuestas</button>
+        </div>
+      </section>
 
-      <div class="sidebar">
-        <strong>Preguntas</strong>
-        <br><br>
-        {% for pregunta in preguntas %}
-          <button
-            type="button"
-            onclick="irAPregunta({{ forloop.counter0 }})"
-            id="btn-{{ forloop.counter0 }}"
-          >
-            {{ forloop.counter }}
-          </button>
-        {% endfor %}
-      </div>
+      <!-- Sidebar derecha -->
+      <aside class="panel panel-side">
+        <div class="side-head">
+          <div class="side-title">Preguntas</div>
+          <div class="side-hint">Verde = respondida</div>
+        </div>
 
-    </div>
-  </form>
+        <div class="side-grid">
+          {% for pregunta in preguntas %}
+            <button
+              type="button"
+              class="side-btn"
+              onclick="irAPregunta({{ forloop.counter0 }})"
+              id="btn-{{ forloop.counter0 }}"
+              aria-label="Ir a la pregunta {{ forloop.counter }}"
+            >
+              {{ forloop.counter }}
+            </button>
+          {% endfor %}
+        </div>
+        <div class="nav-right">
+          <a href="{% url 'home' %}" class="btn btn-primary nav-salida">Abandonar Prueba</a>
+        </div>
+      </aside>
+    </form>
+  </main>
+<div id="notificacion" class="notificacion"></div>
 
+  <!-- Modal salida -->
   <div class="modal-backdrop" id="modal-salida">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-salida">
-      <h3 id="titulo-salida">¿Salir de la prueba?</h3>
-      <p>Si sales se cancelará la prueba y se perderá el proceso.</p>
-      <div class="actions">
+      <h3 id="titulo-salida" class="modal-title">¿Salir de la prueba?</h3>
+      <p class="modal-text">Si sales se cancelará la prueba y se perderá el proceso.</p>
+      <div class="modal-actions">
         <button type="button" class="btn btn-primary" id="btn-quedarme">Quedarme</button>
         <button type="button" class="btn btn-danger" id="btn-salir">Salir de todos modos</button>
       </div>
     </div>
   </div>
 
+  <!-- Variables desde Django (mínimo, limpio) -->
   <script>
-    function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let cookie of cookies) {
-          cookie = cookie.trim();
-          if (cookie.startsWith(name + '=')) {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-            break;
-          }
-        }
-      }
-      return cookieValue;
-    }
-    const csrfToken = getCookie("csrftoken");
-
-    let actual = {{ indice|default:0 }};
-    const preguntas = document.querySelectorAll(".pregunta");
-    const botones = document.querySelectorAll(".sidebar button");
-    const inputIndice = document.getElementById("indice_actual");
-    const errorBox = document.getElementById("error-msg");
-
-    function setError(msg) {
-      if (!msg) {
-        errorBox.style.display = "none";
-        errorBox.textContent = "";
-        return;
-      }
-      errorBox.style.display = "block";
-      errorBox.textContent = msg;
-    }
-
-    function estaRespondida(index) {
-      const radios = preguntas[index].querySelectorAll('input[type="radio"]');
-      return Array.from(radios).some(r => r.checked);
-    }
-
-    function actualizarMarcadoRespondidas() {
-      for (let i = 0; i < preguntas.length; i++) {
-        if (estaRespondida(i)) {
-          botones[i].classList.add("respondida");
-        } else {
-          botones[i].classList.remove("respondida");
-        }
-      }
-    }
-
-    function mostrarPregunta(index) {
-      preguntas.forEach(p => p.classList.remove("activa"));
-      botones.forEach(b => b.classList.remove("activa"));
-
-      actual = index;
-
-      preguntas[actual].classList.add("activa");
-      botones[actual].classList.add("activa");
-      inputIndice.value = actual;
-
-      setError(null);
-      actualizarMarcadoRespondidas();
-    }
-
-    function siguiente() {
-      if (!estaRespondida(actual)) {
-        setError("Responde esta pregunta antes de continuar.");
-        return;
-      }
-      if (actual < preguntas.length - 1) {
-        mostrarPregunta(actual + 1);
-      }
-    }
-
-    function anterior() {
-      if (actual > 0) mostrarPregunta(actual - 1);
-    }
-
-    function irAPregunta(index) {
-      mostrarPregunta(index);
-    }
-
-    document.addEventListener("change", (e) => {
-      if (e.target.matches('input[type="radio"]')) {
-        actualizarMarcadoRespondidas();
-        setError(null);
-      }
-    });
-
-    if (preguntas.length > 0) {
-      if (actual < 0 || actual >= preguntas.length) actual = 0;
-      mostrarPregunta(actual);
-    }
-
-    let enviado = false;
-    const form = document.getElementById("form-prueba");
-
-    form.addEventListener("submit", (e) => {
-      for (let i = 0; i < preguntas.length; i++) {
-        if (!estaRespondida(i)) {
-          e.preventDefault();
-          mostrarPregunta(i);
-          setError("Debes responder todas las preguntas antes de enviar.");
-          return;
-        }
-      }
-      enviado = true;
-    });
-
-    const modal = document.getElementById("modal-salida");
-    const btnQuedarme = document.getElementById("btn-quedarme");
-    const btnSalir = document.getElementById("btn-salir");
-    let destinoPendiente = null;
-
-    const urlAbandonar = "{% url 'abandonar_prueba' prueba_usuario.id %}";
-
-    function abrirModal(destino) {
-      if (enviado) { window.location.href = destino; return; }
-      destinoPendiente = destino;
-      modal.style.display = "flex";
-    }
-
-    function cerrarModal() {
-      modal.style.display = "none";
-      destinoPendiente = null;
-    }
-
-    async function abandonarYSalir() {
-      try {
-        await fetch(urlAbandonar, {
-          method: "POST",
-          credentials: "same-origin",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "X-CSRFToken": csrfToken
-          },
-          body: "",
-          keepalive: true
-        });
-      } catch (e) {}
-
-      if (destinoPendiente) window.location.href = destinoPendiente;
-    }
-
-    btnQuedarme.addEventListener("click", cerrarModal);
-    btnSalir.addEventListener("click", abandonarYSalir);
-
-    document.querySelectorAll("a.nav-salida").forEach(a => {
-      a.addEventListener("click", (e) => {
-        e.preventDefault();
-        abrirModal(a.href);
-      });
-    });
-
-    window.addEventListener("beforeunload", (e) => {
-      if (enviado) return;
-
-      e.preventDefault();
-      e.returnValue = "";
-
-      try {
-        navigator.sendBeacon(urlAbandonar, new Blob([], { type: "application/x-www-form-urlencoded" }));
-      } catch (err) {}
-    });
-
-    window.addEventListener("pagehide", () => {
-      if (enviado) return;
-      try {
-        navigator.sendBeacon(urlAbandonar, new Blob([], { type: "application/x-www-form-urlencoded" }));
-      } catch (err) {}
-    });
+    window.RYU_TEST = {
+      indiceInicial: {{ indice|default:0 }},
+      urlAbandonar: "{% url 'abandonar_prueba' prueba_usuario.id %}"
+    };
   </script>
 
+  <!-- JS -->
+  <script src="{% static 'js/resolver_prueba.js' %}"></script>
 </body>
 </html>
